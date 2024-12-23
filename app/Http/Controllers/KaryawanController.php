@@ -10,9 +10,15 @@ class KaryawanController extends Controller
 {
     public function dashboard()
     {
-        return view('pages-karyawan.dashboard-karyawan'); // Pastikan Anda memiliki file view bernama 'dashboard.blade.php'
+        $totaltugashariini = Pemesanan::count();
+
+        // Mengambil total pemasukan dari subtotal di tabel transaksi
+        $tugasdimulai = Pemesanan::where('status', 'Proses')->count(); // Menghitung jumlah tugas dengan status 'Proses'
+        $tugasselesai = Pemesanan::where('status', 'Selesai')->count(); // Menghitung jumlah tugas dengan status 'Selesai'
+
+        return view('pages-karyawan.dashboard-karyawan', compact('totaltugashariini', 'tugasdimulai', 'tugasselesai')); // Dashboard view
     }
-    
+
     public function index()
     {
         $orders = Pemesanan::with('karyawan')->paginate(10); // Gunakan paginate
@@ -22,14 +28,14 @@ class KaryawanController extends Controller
     public function tugasharian()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(3); // Menampilkan 4 komentar per halaman
         return view('pages-karyawan.tugas-harian', compact('orders'));
     }
 
     public function updatestatus()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(3); // Menampilkan 4 komentar per halaman
         return view('pages-karyawan.update-status', compact('orders'));
     }
 
@@ -48,41 +54,129 @@ class KaryawanController extends Controller
         return redirect()->back()->with('success', 'Status berhasil diperbarui.');
     }
  
-public function setOrderToSelesai($id)
+    public function setOrderToSelesai($id)
+    {
+        // Temukan pesanan berdasarkan ID
+        $order = Pemesanan::find($id);
+
+        // Cek jika pesanan tidak ditemukan
+        if (!$order) {
+            return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        // Ubah status pesanan menjadi "Selesai"
+        $order->status = 'Selesai';
+        
+        // Cek apakah perubahan status berhasil disimpan
+        if ($order->save()) {
+            // Redirect ke halaman riwayat pengerjaan dengan pesan sukses
+            return redirect()->route('riwayat.pengerjaan')->with('success', 'Pesanan telah selesai.');
+        } else {
+            // Jika status tidak berhasil disimpan
+            return redirect()->back()->with('error', 'Gagal memperbarui status pesanan.');
+        }
+    }
+
+    public function indextugasharian(Request $request)
 {
-    // Temukan pesanan berdasarkan ID
-    $order = Pemesanan::find($id);
+    // Mendapatkan parameter pencarian
+    $search = $request->input('search');
 
-    // Cek jika pesanan tidak ditemukan
-    if (!$order) {
-        return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
-    }
+    // Query pencarian data tugas harian
+    $orders = Pemesanan::with(['user', 'layanan'])
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                // Pencarian berdasarkan nama pelanggan
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan nama layanan
+                ->orWhereHas('layanan', function ($layananQuery) use ($search) {
+                    $layananQuery->where('nama_layanan', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan tanggal pemesanan
+                ->orWhere('tanggal', 'like', '%' . $search . '%')
+                // Pencarian berdasarkan metode pembayaran
+                ->orWhere('metode_pembayaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+        ->paginate(5); // Batas per halaman
 
-    // Ubah status pesanan menjadi "Selesai"
-    $order->status = 'Selesai';
-    
-    // Cek apakah perubahan status berhasil disimpan
-    if ($order->save()) {
-        // Hapus pesanan setelah status diperbarui
-        $order->delete(); // Menghapus data setelah status menjadi selesai
-
-        // Redirect ke halaman riwayat pengerjaan dengan pesan sukses
-        return redirect()->route('riwayat.pengerjaan')->with('success', 'Pesanan telah selesai dan data dihapus.');
-    } else {
-        // Jika status tidak berhasil disimpan
-        return redirect()->back()->with('error', 'Gagal memperbarui status pesanan.');
-    }
+    // Return view dengan data hasil pencarian
+    return view('pages-karyawan.tugas-harian', compact('orders', 'search'));
 }
-    
+
+public function indexupdatestatus(Request $request)
+{
+    // Mendapatkan parameter pencarian
+    $search = $request->input('search');
+
+    // Query pencarian data tugas harian
+    $orders = Pemesanan::with(['user', 'layanan'])
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                // Pencarian berdasarkan nama pelanggan
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan nama layanan
+                ->orWhereHas('layanan', function ($layananQuery) use ($search) {
+                    $layananQuery->where('nama_layanan', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan tanggal pemesanan
+                ->orWhere('tanggal', 'like', '%' . $search . '%')
+                // Pencarian berdasarkan metode pembayaran
+                ->orWhere('metode_pembayaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+        ->paginate(5); // Batas per halaman
+
+    // Return view dengan data hasil pencarian
+    return view('pages-karyawan.update-status', compact('orders', 'search'));
+}
+
+public function indexstatuspengerjaan(Request $request)
+{
+    // 1. Mendapatkan parameter pencarian dari input 'search'
+    $search = $request->input('search');
+
+    // 2. Query untuk mendapatkan data 'Pemesanan' dengan relasi ke 'user' dan 'layanan'
+    $orders = Pemesanan::with(['user', 'layanan'])
+        ->when($search, function ($query) use ($search) {
+            // Jika ada parameter pencarian, filter data
+            $query->where(function ($q) use ($search) {
+                // Pencarian berdasarkan nama pelanggan
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan nama layanan
+                ->orWhereHas('layanan', function ($layananQuery) use ($search) {
+                    $layananQuery->where('nama_layanan', 'like', '%' . $search . '%');
+                })
+                // Pencarian berdasarkan tanggal pemesanan
+                ->orWhere('tanggal', 'like', '%' . $search . '%')
+                // Pencarian berdasarkan metode pembayaran
+                ->orWhere('metode_pembayaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+        ->paginate(5); // Batasi hasil per halaman (pagination)
+
+    // 3. Mengirimkan data ke view 'pages-karyawan.update-status'
+    return view('pages-karyawan.status-pengerjaaan', compact('orders', 'search'));
+}
+
     public function detailpesanan()
     {
         return view('pages-karyawan.detail-pesanan'); // Pastikan Anda memiliki file view bernama 'dashboard.blade.php'
     }
 
-    public function riwayatPengerjaan()
+    public function riwayatpengerjaan()
     {
-        // Ambil semua pesanan dengan status "Selesai" untuk riwayat pengerjaan
-        $orders = Pemesanan::paginate(10);
+        // Ambil pesanan dengan status "Selesai"
+        $orders = Pemesanan::where('status', 'Selesai')->paginate(1);
         
         return view('pages-karyawan.riwayat-pengerjaan', compact('orders'));
     }
@@ -92,6 +186,37 @@ public function setOrderToSelesai($id)
         $orders = Pemesanan::where('status', 'Selesai')->paginate(10);
 
         return view('riwayat-pengerjaan', compact('orders'));
+    }
+
+    public function indexriwayatpengerjaan(Request $request)
+    {
+        // 1. Mendapatkan parameter pencarian dari input 'search'
+        $search = $request->input('search');
+
+        // 2. Query untuk mendapatkan data 'Pemesanan' dengan relasi ke 'user' dan 'layanan'
+        $orders = Pemesanan::with(['user', 'layanan'])
+            ->when($search, function ($query) use ($search) {
+                // Jika ada parameter pencarian, filter data
+                $query->where(function ($q) use ($search) {
+                    // Pencarian berdasarkan nama pelanggan
+                    $q->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', '%' . $search . '%');
+                    })
+                    // Pencarian berdasarkan nama layanan
+                    ->orWhereHas('layanan', function ($layananQuery) use ($search) {
+                        $layananQuery->where('nama_layanan', 'like', '%' . $search . '%');
+                    })
+                    // Pencarian berdasarkan tanggal pemesanan
+                    ->orWhere('tanggal', 'like', '%' . $search . '%')
+                    // Pencarian berdasarkan metode pembayaran
+                    ->orWhere('metode_pembayaran', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+            ->paginate(5); // Batasi hasil per halaman (pagination)
+
+        // 3. Mengirimkan data ke view 'pages-karyawan.update-status'
+        return view('pages-karyawan.riwayat-pengerjaan', compact('orders', 'search'));
     }
 
     public function ulasanpengguna()

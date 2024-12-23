@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 
 class ManajemenPenggunaController extends Controller
 {
-    // Menampilkan daftar pengguna dengan role 'user'
-    public function index()
-    {
-        $users = User::where('role', 'user')->get(); // Mengambil data pengguna dengan role 'user'
-        return view('pages-admin.manajemen-pengguna', compact('users')); // Menampilkan tampilan dengan data pengguna
-    }
+// Menampilkan daftar pengguna dengan role 'user' dengan pagination
+public function index()
+{
+    // Mengambil data pengguna dengan role 'user' dan paginasi
+    $users = User::where('role', 'user')->paginate(5); // Menampilkan 10 pengguna per halaman
+    return view('pages-admin.manajemen-pengguna', compact('users')); // Menampilkan tampilan dengan data pengguna
+}
 
     // Menampilkan form untuk menambah pengguna baru
     public function create()

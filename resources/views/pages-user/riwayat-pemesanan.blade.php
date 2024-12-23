@@ -16,21 +16,26 @@
                 <h5 class="text-2xl font-semibold text-gray-700">Riwayat Pemesanan</h5>
             </div>
 
-            <div class="flex justify-between items-center mb-4">
+            <!-- Search Input -->
+            <div class="flex justify-between mb-6">
                 <div class="relative w-full max-w-xs">
-                    <!-- Input Pencarian -->
-                    <input 
-                        id="search-input" 
-                        type="text" 
-                        placeholder="Cari status pemesanan..." 
-                        class="block w-full pl-10 pr-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
-                        onkeyup="searchTable()"
-                    />
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                    </span>
+                    <form action="{{ route('pages-user.riwayat-pemesanan') }}" method="GET">
+                        <input 
+                            id="search-input" 
+                            type="text" 
+                            name="search"
+                            value="{{ request('search') }}" 
+                            placeholder="Cari jenis layanan..." 
+                            class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                        />
+                        <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p> <!-- Pesan tidak ditemukan -->                    
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                        </span>
+                    </form>
                 </div>
-            </div>       
+            </div>
+
             <div class="max-w-4xl mx-auto mt-10">
                 <div class="overflow-x-auto">
                     <table class="w-full bg-white rounded-lg shadow-md">
@@ -45,17 +50,19 @@
                             </tr>
                         </thead>
                         <tbody id="table-body">
-                            @forelse($orders->where('status', '!=', 'Selesai') as $index => $order)
+                            @forelse($orders as $index => $order)
                                 <tr id="order-{{ $order->id }}" class="border-t">
                                     <td class="text-center py-4 px-4">{{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->layanan->nama_layanan }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->tanggal }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->metode_pembayaran }}</td>
                                     <td class="text-center py-3 px-3">
-                                        <span class="status-label {{ $order->status === 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }} 
+                                        <span class="status-label 
+                                            {{ $order->status === 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }} 
                                             text-white font-medium px-2 py-0.5 text-sm rounded-full shadow-md inline-block">
                                             {{ $order->status }}
-                                        </span>                                                                         
+                                        </span>
+                                    </td>                                    
                                     <td class="text-center py-4 px-4">
                                         <button 
                                             onclick="openModal({{ $order->id }})" 
@@ -87,6 +94,11 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    <!-- Link Pagination -->
+                    <div class="mt-4">
+                        {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,7 +115,7 @@
             const row = rows[i];
             const cells = row.getElementsByTagName("td");
             let match = false;
-            
+
             for (let j = 0; j < cells.length; j++) {
                 if (cells[j].innerText.toLowerCase().includes(input)) {
                     match = true;

@@ -44,10 +44,10 @@ class AdminController extends Controller
     public function datalayanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $layanans = Layanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $layanans = Layanan::paginate(2); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-layanan', compact('layanans'));
     }
-
+    
     public function tambahlayanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
@@ -74,30 +74,32 @@ class AdminController extends Controller
          return view('pages-admin-print-layanan', compact('orders'));
      }
 
-    public function printlayanan()
-    {
-        // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(15); // Menampilkan 4 komentar per halaman
-        return view('pages-admin.print-layanan', compact('orders'));
-    }
+     public function DetailLayanan($id)
+     {
+         // Fetch the order by id
+         $order = Pemesanan::findOrFail($id);
+ 
+         // Pass the order to the print-layanan view
+         return view('pages-admin.print-layanan', compact('order'));
+     }
 
     public function printReceipt($id)
     {
         // Retrieve the order by ID
-        $orders = Pemesanan::find($id);
+        $order = Pemesanan::find($id);
 
         // If the order is not found, you can handle it accordingly
-        if (!$orders) {
+        if (!$order) {
             return abort(404, 'Order not found');
         }
 
         // Generate the PDF and pass the order data to the view
-        $pdf = Pdf::loadView('print.print-layanan', compact('orders'));
+        $pdf = Pdf::loadView('print.print-layanan', compact('order'));
 
         // Return the PDF as a download
         return $pdf->download("struk-pembelian-{$id}.pdf");
     }
-
+    
     public function cetakPdf(Request $request)
     {
         // Ambil data order untuk laporan
@@ -121,7 +123,7 @@ class AdminController extends Controller
     public function datatransaksi()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-transaksi', compact('orders'));
     }
 
@@ -138,7 +140,7 @@ class AdminController extends Controller
     public function datapemesanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-pemesanan', compact('orders'));
     }
 
@@ -181,7 +183,7 @@ class AdminController extends Controller
     public function manajemenkaryawan()
     {
         // Ambil hanya pengguna dengan role 'User' dan tambahkan pagination
-        $users = User::where('role', 'Karyawan')->paginate(10);
+        $users = User::where('role', 'Karyawan')->paginate(2);
         
         // Kirim data ke tampilan
         return view('pages-admin.manajemen-karyawan', compact('users'));
@@ -201,7 +203,7 @@ class AdminController extends Controller
     public function manajemenpengguna()
     {
         // Ambil hanya pengguna dengan role 'User' dan tambahkan pagination
-        $users = User::where('role', 'User')->paginate(10);
+        $users = User::where('role', 'User')->paginate(5);
         
         // Kirim data ke tampilan
         return view('pages-admin.manajemen-pengguna', compact('users'));
@@ -226,9 +228,10 @@ class AdminController extends Controller
     public function datapelanggan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-pelanggan', compact('orders'));
     }
+
     public function tambahpelanggan()
     {
         return view('pages-admin.tambah-pelanggan'); // Profile view
@@ -239,12 +242,227 @@ class AdminController extends Controller
         return view('pages-admin.pendapatan'); // Profile view
     }
 
-    public function laporan()
-    {
-        // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
-        return view('pages-admin.laporan', compact('orders'));
+    public function laporan(Request $request)
+{
+    // Mendapatkan input tanggal mulai (start_date) dari request
+    $startDate = $request->input('start_date');
+
+    // Jika tanggal mulai diisi, filter pemesanan berdasarkan tanggal
+    if ($startDate) {
+        // Mengambil pemesanan yang sesuai dengan tanggal
+        $orders = Pemesanan::whereDate('created_at', $startDate)->paginate(2); // Filter berdasarkan tanggal
+    } else {
+        // Jika tidak ada tanggal, ambil semua pemesanan
+        $orders = Pemesanan::paginate(2);
     }
+
+    return view('pages-admin.laporan', compact('orders'));
+}
+
+    public function indexlayanan(Request $request)
+    {
+        // Mendapatkan parameter pencarian
+        $search = $request->input('search');
+        
+        // Ambil data layanan dengan relasi terkait (jika ada) dan pencarian yang sesuai
+        $layanans = Layanan::when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                // Pencarian berdasarkan nama layanan
+                $q->where('nama_layanan', 'like', '%' . $search . '%')
+                  // Pencarian berdasarkan deskripsi layanan
+                  ->orWhere('deskripsi', 'like', '%' . $search . '%')
+                  // Pencarian berdasarkan harga layanan
+                  ->orWhere('harga', 'like', '%' . $search . '%');
+            });
+        })
+        // Urutkan berdasarkan nama layanan atau bisa diurutkan berdasarkan waktu
+        ->orderBy('nama_layanan', 'asc') // Atau bisa diubah sesuai kebutuhan, misal berdasarkan created_at
+        ->paginate(5); // Batas per halaman 5
+    
+        // Return view dengan data layanan yang sudah difilter dan diurutkan
+        return view('pages-admin.data-layanan', compact('layanans', 'search'));
+    }
+
+    public function indextransaksi(Request $request)
+    {
+        // Mendapatkan parameter pencarian
+        $search = $request->input('search');
+        
+        // Ambil data transaksi dengan relasi terkait (misalnya, layanan dan user)
+        $orders = Pemesanan::with(['layanan', 'user']) // Asumsi ada relasi 'layanan' dan 'user'
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    // Pencarian berdasarkan nama pengguna
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%'); // Nama pengguna
+                    })
+                    // Pencarian berdasarkan nama layanan
+                    ->orWhereHas('layanan', function ($q) use ($search) {
+                        $q->where('nama_layanan', 'like', '%' . $search . '%'); // Nama layanan
+                    })
+                    // Pencarian berdasarkan tanggal transaksi
+                    ->orWhere('tanggal', 'like', '%' . $search . '%')
+                    // Pencarian berdasarkan metode pembayaran
+                    ->orWhere('metode_pembayaran', 'like', '%' . $search . '%')
+                    // Pencarian berdasarkan status pembayaran
+                    ->orWhere('status_pembayaran', 'like', '%' . $search . '%');
+                });
+            })
+            // Urutkan berdasarkan tanggal transaksi
+            ->orderBy('tanggal', 'desc')
+            // Pagination jika perlu
+            ->paginate(5); // Batas per halaman 5
+    
+        // Return view dengan data transaksi yang sudah difilter
+        return view('pages-admin.data-transaksi', compact('orders', 'search'));
+    }
+
+    public function indexpemesanan(Request $request)
+    {
+        // Mendapatkan parameter pencarian
+        $search = $request->input('search');
+        
+        // Ambil data transaksi dengan relasi terkait (misalnya, layanan dan user)
+        $orders = Pemesanan::with(['layanan', 'user']) // Asumsi ada relasi 'layanan' dan 'user'
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    // Pencarian berdasarkan nama pengguna
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%'); // Nama pengguna
+                    })
+                    // Pencarian berdasarkan nama layanan
+                    ->orWhereHas('layanan', function ($q) use ($search) {
+                        $q->where('nama_layanan', 'like', '%' . $search . '%'); // Nama layanan
+                    })
+                    // Pencarian berdasarkan tanggal transaksi
+                    ->orWhere('tanggal', 'like', '%' . $search . '%')
+                    // Pencarian berdasarkan metode pembayaran
+                    ->orWhere('metode_pembayaran', 'like', '%' . $search . '%')
+                    // Pencarian berdasarkan status pembayaran
+                    ->orWhere('status_pembayaran', 'like', '%' . $search . '%');
+                });
+            })
+            // Urutkan berdasarkan tanggal transaksi
+            ->orderBy('tanggal', 'desc')
+            // Pagination jika perlu
+            ->paginate(5); // Batas per halaman 5
+    
+        // Return view dengan data transaksi yang sudah difilter
+        return view('pages-admin.data-pemesanan', compact('orders', 'search'));
+    }
+    
+    public function indexPelanggan(Request $request)
+{
+    // Retrieve the search input from the request
+    $search = $request->input('search');
+
+    // Fetch customer-related orders with related relationships (user and layanan)
+    $orders = Pemesanan::with(['layanan', 'user']) // Assumes 'layanan' and 'user' relationships exist
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                // Search by customer/member ID
+                $q->whereHas('user', function ($q) use ($search) {
+                    $q->where('id_member', 'like', '%' . $search . '%'); // Member ID
+                })
+                // Search by customer name
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%'); // Customer name
+                })
+                // Search by service name
+                ->orWhereHas('layanan', function ($q) use ($search) {
+                    $q->where('nama_layanan', 'like', '%' . $search . '%'); // Service name
+                })
+                // Search by order date
+                ->orWhere('tanggal', 'like', '%' . $search . '%')
+                // Search by payment method
+                ->orWhere('metode_pembayaran', 'like', '%' . $search . '%')
+                // Search by payment status
+                ->orWhere('status_pembayaran', 'like', '%' . $search . '%');
+            });
+        })
+        // Order results by the order date
+        ->orderBy('tanggal', 'desc')
+        // Paginate results (5 per page)
+        ->paginate(5);
+
+    // Return the view with the filtered data and search term
+    return view('pages-admin.data-pelanggan', compact('orders', 'search'));
+}
+
+public function indexManajemenPengguna(Request $request)
+{
+    // Retrieve the search input from the request
+    $search = $request->input('search');
+
+    // Fetch users based on search input, filtering by role 'user'
+    $users = User::query()
+        ->where('role', 'user') // Only include users with role 'user'
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%') // Search by name
+                  ->orWhere('email', 'like', '%' . $search . '%') // Search by email
+                  ->orWhere('id_member', 'like', '%' . $search . '%'); // Search by member ID (if available)
+            });
+        })
+        ->orderBy('name', 'asc') // Sort by name
+        ->paginate(10); // Pagination with 10 users per page
+
+    // Return the view with filtered users and search term
+    return view('pages-admin.manajemen-pengguna', compact('users', 'search'));
+}
+
+public function indexManajemenKaryawan(Request $request)
+{
+    // Retrieve the search input from the request
+    $search = $request->input('search');
+
+    // Fetch users with role 'karyawan' and apply search filter
+    $users = User::query()
+        ->where('role', 'karyawan') // Filter users with role 'karyawan'
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%') // Search by name
+                  ->orWhere('email', 'like', '%' . $search . '%') // Search by email
+                  ->orWhere('id_member', 'like', '%' . $search . '%'); // Search by member ID (if available)
+            });
+        })
+        ->orderBy('name', 'asc') // Sort by name
+        ->paginate(10); // Pagination with 10 users per page
+
+    // Return the view with filtered users and search term
+    return view('pages-admin.manajemen-karyawan', compact('users', 'search'));
+}
+
+public function indexmanajemenlaporan(Request $request)
+{
+    // Retrieve the search input from the request
+    $search = $request->input('search');
+
+    // Fetch orders and apply search filter
+    $orders = Pemesanan::query()
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%') // Search by user name
+                              ->orWhere('id_member', 'like', '%' . $search . '%'); // Search by user ID member
+                })
+                ->orWhereHas('layanan', function ($layananQuery) use ($search) {
+                    $layananQuery->where('nama_layanan', 'like', '%' . $search . '%'); // Search by layanan name
+                })
+                ->orWhere('tanggal', 'like', '%' . $search . '%') // Search by date
+                ->orWhere('metode_pembayaran', 'like', '%' . $search . '%') // Search by payment method
+                ->orWhere('status', 'like', '%' . $search . '%'); // Search by status
+            });
+        })
+        ->orderBy('tanggal', 'desc') // Sort by date
+        ->paginate(10); // Pagination with 10 results per page
+
+    // Return the view with filtered orders and search term
+    return view('pages-admin.laporan', compact('orders', 'search'));
+}
+
+
+
 
     public function ulasanpengguna()
     {

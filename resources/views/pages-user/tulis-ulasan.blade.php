@@ -26,12 +26,12 @@
                                 </ul>
                             </div>
                         @endif
-                        <form action="{{ route('ulasan.store') }}" method="POST" class="bg-white shadow-xl rounded-2xl p-6 space-y-4">
+                        <form action="{{ route('ulasan.index') }}" method="POST" class="bg-white shadow-xl rounded-2xl p-6 space-y-4">
                             @csrf
                             <!-- Nama Layanan -->
                             <div>
-                                <label for="nama_layanan" class="text-lg font-semibold text-gray-700">Nama Layanan</label>
-                                <input type="text" id="nama_layanan" name="nama_layanan" placeholder="Masukkan nama layanan" class="w-full mt-2 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <label for="nama_pengguna" class="text-lg font-semibold text-gray-700">Nama Pengguna</label>
+                                <input type="text" id="nama_pengguna" name="nama_pengguna" placeholder="Masukkan nama layanan" class="w-full mt-2 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
                             <!-- Rating -->
                             <div class="mt-4">

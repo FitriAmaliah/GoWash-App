@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laporan Transaksi</title>
     <style>
-        /* Set margin dan padding untuk mencetak */
+        /* Margin dan pengaturan halaman cetak */
         @page {
             margin: 20mm;
         }
@@ -18,33 +18,38 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Menjamin konten berada di tengah vertikal */
             flex-direction: column;
+            background-color: #f8f9fa;
+        }
+
+        h1, p {
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
             font-size: 24px;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
         p {
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 30px;
+            font-size: 14px;
+            margin: 10px 0 20px 0;
         }
 
         .table-container {
-            width: 90%; /* Lebar 90% dari halaman */
-            max-width: 1000px; /* Maksimal lebar tabel */
+            width: 90%;
+            max-width: 1000px;
             margin: 0 auto;
-            border-top: 2px solid #4f46e5;
-            padding-top: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed; /* Mengatur kolom agar tetap proporsional */
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -57,9 +62,10 @@
         }
 
         th, td {
-            padding: 12px 15px;
+            padding: 10px;
             text-align: center;
             font-size: 12px;
+            word-wrap: break-word; /* Membungkus teks panjang */
         }
 
         th {
@@ -75,6 +81,7 @@
             background-color: #f1f1f1;
         }
 
+        /* Gaya status */
         .status-label {
             display: inline-block;
             padding: 5px 10px;
@@ -85,20 +92,23 @@
 
         .bg-green-500 {
             background-color: #22c55e;
+            color: white;
         }
 
         .bg-yellow-500 {
             background-color: #facc15;
-        }
-
-        .text-gray-700 {
             color: #374151;
         }
 
-        .border-b {
-            border-bottom: 1px solid #e5e7eb;
+        /* Menghindari tabel terpotong saat dicetak */
+        @media print {
+            table, tr, td, th {
+                page-break-inside: avoid; /* Hindari pemisahan tabel */
+            }
+            body {
+                background-color: white;
+            }
         }
-
     </style>
 </head>
 <body>
@@ -108,40 +118,40 @@
     <p>Berikut adalah laporan transaksi pelanggan yang mencakup informasi tentang ID member, jenis layanan, dan status pembayaran.</p>
 
     <!-- Tabel Laporan -->
-           <!-- Data Table -->
-           <div class="overflow-x-auto mb-10">
-            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
-                <thead class="bg-indigo-500 text-white">
-                    <tr>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member Pelanggan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pemesanan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Total Biaya</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Status</th>
-                    </tr>
-                </thead>  
-                <tbody class="text-gray-700">
-                    @foreach ($orders as $index => $order)
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-3 px-4 text-center">{{ $index + 1 }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->user->id_member ?? 'Tidak Ada' }}</td>
-                        <td class="py-3 px-4 text-center">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->biaya }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="bg-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-200 text-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                {{ $order->status }}
-                            </span>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID Member Pelanggan</th>
+                    <th>Nama Pelanggan</th>
+                    <th>Jenis Layanan</th>
+                    <th>Tanggal Pemesanan</th>
+                    <th>Metode Pembayaran</th>
+                    <th>Total Biaya</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Contoh Data -->
+                @foreach ($orders as $index => $order)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $order->user->id_member ?? 'Tidak Ada' }}</td>
+                    <td>{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                    <td>{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                    <td>{{ $order->tanggal }}</td>
+                    <td>{{ $order->metode_pembayaran }}</td>
+                    <td>Rp {{ number_format($order->biaya, 3, ',', '.') }}</td>
+                    <td>
+                        <span class="status-label {{ $order->status == 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                            {{ $order->status }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
 </body>

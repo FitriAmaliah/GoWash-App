@@ -14,35 +14,154 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function dashboard()
-    {
-        return view('pages-user.dashboard-user'); // Pastikan Anda memiliki file view bernama 'dashboard.blade.php'
-    }
+{
+    $userId = auth()->id(); // Mendapatkan user ID yang sedang login
 
-    public function layanantersedia()
-    {
-        // Ambil semua layanan dari database
-        $layanans = Layanan::all();
+    // Mengambil total pemesanan berdasarkan user_id
+    $totalpemesanan = Pemesanan::where('user_id', $userId)->count();
 
-        // Tampilkan view dengan data layanan
-        return view('pages-user.layanan-tersedia', compact('layanans'));
-    }
+    // Mengambil total pemesanan aktif berdasarkan user_id
+    $pemesananaktif = Pemesanan::where('user_id', $userId)
+        ->where('status', 'Proses')
+        ->count(); // Menghitung jumlah pemesanan dengan status 'Proses'
+
+    // Mengambil total pemesanan selesai berdasarkan user_id
+    $pemesananselesai = Pemesanan::where('user_id', $userId)
+        ->where('status', 'Selesai')
+        ->count(); // Menghitung jumlah pemesanan dengan status 'Selesai'
+
+    // Mengirim data ke view dashboard-user
+    return view('pages-user.dashboard-user', compact('totalpemesanan', 'pemesananaktif', 'pemesananselesai'));
+}
+
+public function layanantersedia(Request $request)
+{
+    // Ambil semua layanan dengan paginasi 2 data per halaman
+    $layanans = Layanan::paginate(3);
+
+    // Tampilkan view dengan data layanan dan paginasi
+    return view('pages-user.layanan-tersedia', compact('layanans'));
+}
+
+    public function indexlayanantersedia(Request $request)
+{
+    // Mendapatkan parameter pencarian
+    $search = $request->input('search');
+    
+    // Ambil data layanan dengan relasi terkait (jika ada) dan pencarian yang sesuai
+    $layanans = Layanan::when($search, function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            // Pencarian berdasarkan nama layanan
+            $q->where('nama_layanan', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan deskripsi layanan
+              ->orWhere('deskripsi', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan harga layanan
+              ->orWhere('harga', 'like', '%' . $search . '%');
+        });
+    })
+    // Urutkan berdasarkan nama layanan atau bisa diurutkan berdasarkan waktu
+    ->orderBy('nama_layanan', 'asc') // Atau bisa diubah sesuai kebutuhan, misal berdasarkan created_at
+    ->paginate(5); // Batas per halaman 5
+
+    // Return view dengan data layanan yang sudah difilter dan diurutkan
+    return view('pages-user.layanan-tersedia', compact('layanans', 'search'));
+}
+
+public function indexstatuspemesanan(Request $request)
+{
+    // Mendapatkan parameter pencarian
+    $search = $request->input('search');
+    $status = $request->input('status');  // If you want to filter by status as well
+
+    // Ambil data layanan dengan relasi terkait (jika ada) dan pencarian yang sesuai
+    $layanans = Layanan::when($search, function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            // Pencarian berdasarkan nama layanan
+            $q->where('nama_layanan', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan deskripsi layanan
+              ->orWhere('deskripsi', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan harga layanan
+              ->orWhere('harga', 'like', '%' . $search . '%');
+        });
+    })
+    ->orderBy('nama_layanan', 'asc') // Atau bisa diubah sesuai kebutuhan
+    ->paginate(5); // Batas per halaman 5
+
+    // Ambil data pemesanan dengan status yang sesuai
+    $orders = Pemesanan::when($status, function ($query) use ($status) {
+        $query->where('status', 'like', '%' . $status . '%');
+    })
+    ->when($search, function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            // Search for orders based on layanan name
+            $q->whereHas('layanan', function ($query) use ($search) {
+                $query->where('nama_layanan', 'like', '%' . $search . '%');
+            });
+        });
+    })
+    ->paginate(5);  // Batas per halaman 5
+
+    // Return view dengan data layanan yang sudah difilter dan diurutkan
+    return view('pages-user.status-pemesanan', compact('orders', 'layanans', 'search', 'status'));
+}
+
+public function indexriwayatpemesanan(Request $request)
+{
+    // Mendapatkan parameter pencarian dan status
+    $search = $request->input('search');
+    $status = $request->input('status');  // If you want to filter by order status
+
+    // Ambil data layanan yang sesuai dengan pencarian
+    $layanans = Layanan::when($search, function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            // Pencarian berdasarkan nama layanan
+            $q->where('nama_layanan', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan deskripsi layanan
+              ->orWhere('deskripsi', 'like', '%' . $search . '%')
+              // Pencarian berdasarkan harga layanan
+              ->orWhere('harga', 'like', '%' . $search . '%');
+        });
+    })
+    ->orderBy('nama_layanan', 'asc') // Sorting berdasarkan nama layanan atau sesuai kebutuhan
+    ->paginate(5); // Pagination dengan 5 data per halaman
+
+    // Ambil data pemesanan berdasarkan status jika diberikan
+    $orders = Pemesanan::when($search, function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            // Pencarian berdasarkan nama layanan di pemesanan
+            $q->whereHas('layanan', function ($query) use ($search) {
+                $query->where('nama_layanan', 'like', '%' . $search . '%');
+            });
+        });
+    })
+    ->when($status, function ($query) use ($status) {
+        $query->where('status', 'like', '%' . $status . '%');
+    })
+    ->paginate(5);
+
+    // Return view dengan data layanan dan pemesanan yang sudah difilter
+    return view('pages-user.riwayat-pemesanan', compact('orders', 'layanans', 'search', 'status'));
+}
+
 
     public function statuspemesanan()
     {
        // Ambil data pemesanan berdasarkan user_id yang sedang login
        $userId = Auth::id(); // Dapatkan user_id dari user yang login
-       $orders = Pemesanan::where('user_id', $userId)->paginate(); // Paginate 10 per halaman
+       $orders = Pemesanan::where('user_id', $userId)->paginate(1); // Paginate 10 per halaman
 
        return view('pages-user.status-pemesanan', compact('orders'));
     }
 
-    public function riwayatPemesanan()
-    {
-        // Ambil semua pesanan dengan status "Selesai" untuk riwayat pengerjaan
-        $orders = Pemesanan::paginate(10);
-        
-        return view('pages-user.riwayat-pemesanan', compact('orders'));
-    }
+    public function riwayatpemesanan()
+        {
+            // Ambil pesanan dengan status "Selesai" untuk pengguna yang sedang login
+            $orders = Pemesanan::where('user_id', auth()->id())
+                            ->where('status', 'Selesai')
+                            ->paginate(1);
+            
+            return view('pages-user.riwayat-pemesanan', compact('orders'));
+        }
 
     public function profiluser()
     {
@@ -193,7 +312,6 @@ public function destroy($id)
         // Redirect back with a success message
         return redirect()->route('profile-user')->with('success', 'Profil Anda telah diperbarui!');
     }
-
 
     public function show()
     {

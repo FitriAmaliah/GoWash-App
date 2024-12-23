@@ -27,7 +27,7 @@
                 <div class="bg-gradient-to-r from-red-400 via-red-500 to-red-600 p-6 rounded-lg shadow flex justify-between items-center">
                     <div>
                         <h2 class="text-white font-semibold">Total Pemesanan</h2>
-                        <p class="text-3xl text-white font-bold">10</p>
+                        <p class="text-3xl text-white font-bold">{{ $totalpemesanan }}</p>
                     </div>
                     <i class="fa-solid fa-list-ul fa-5x text-white"></i>
                 </div>
@@ -36,7 +36,7 @@
                 <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 p-6 rounded-lg shadow flex justify-between items-center">
                     <div>
                         <h2 class="text-white font-semibold">Pemesanan Aktif</h2>
-                        <p class="text-3xl text-white font-bold">2</p>
+                        <p class="text-3xl text-white font-bold">{{ $pemesananaktif }}</p>
                     </div>
                     <i class="fa-solid fa-clock fa-5x text-white"></i>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-6 rounded-lg shadow flex justify-between items-center">
                     <div>
                         <h2 class="text-white font-semibold">Pemesanan Selesai</h2>
-                        <p class="text-3xl text-white font-bold">8</p>
+                        <p class="text-3xl text-white font-bold">{{ $pemesananselesai }}</p>
                     </div>
                     <i class="fa-solid fa-circle-check fa-5x text-white"></i>
                 </div>

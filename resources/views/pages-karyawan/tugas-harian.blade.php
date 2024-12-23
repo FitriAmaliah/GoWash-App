@@ -16,21 +16,26 @@
                 <h5 class="text-2xl font-semibold text-gray-700">Tugas Harian Karyawan</h5>
             </div>
 
-            <!-- Tabel Data Transaksi -->
-            <div class="flex justify-between items-center mb-4">
-                <div class="relative w-full max-w-xs">
-                    <input 
-                        id="search-input" 
-                        type="text" 
-                        placeholder="Cari nama pelanggan..." 
-                        class="block w-full pl-10 pr-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
-                        onkeyup="searchTable()"
-                    />
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                    </span>
-                </div>
-            </div>       
+            <!-- Search Input -->
+            <div class="flex justify-between items-center p-4">
+                <div class="flex justify-center mb-4">
+                    <div class="relative w-full max-w-xs">
+                        <form action="{{ route('pages-karyawan.tugas-harian') }}" method="GET">
+                            <input 
+                                id="search-input" 
+                                type="text" 
+                                name="search"
+                                value="{{ request('search') }}" 
+                                placeholder="Cari nama pelanggan..." 
+                                class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                            />
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                            </span>
+                        </form>
+                    </div>
+                </div>      
+            </div>     
             <div class="max-w-4xl mx-auto mt-10">
                 <div class="overflow-x-auto">
                     <table class="w-full bg-white rounded-lg shadow-md">
@@ -78,7 +83,10 @@
                                 </div>
                                 <div class="mt-4">
                                     <!-- Menampilkan Nomor Urut -->
-                                    <p><strong>No:</strong> {{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p>
+                                       <!-- <p><strong>No:</strong> {{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p> -->
+                                       
+                                     <!-- Menampilkan Nama Pelanggan -->
+                                    <p><strong>Nama Pelanggan:</strong> {{ optional($order->user)->name ?? 'Tidak diketahui' }}</p>
 
                                     <!-- Menampilkan Jenis Layanan -->
                                     <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
@@ -110,13 +118,13 @@
                         @endforeach
                         </tbody>
                         </table>
-        <!-- Pagination -->
-        <div class="mt-4">
-            {{ $orders->links('pagination::tailwind') }}
-        </div>
-        </div>
-        </div>
-        </div>
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $orders->links('pagination::tailwind') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
               
     <script>
         function searchTable() {

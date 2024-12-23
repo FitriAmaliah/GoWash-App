@@ -22,7 +22,7 @@
         <div class="relative hidden lg:block">
             <button class="flex items-center text-white focus:outline-none" onclick="ProfileDropdown(event)">
                 <img 
-                src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/logo.jpg' }}" 
+                src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/profile.png' }}" 
                 alt="Foto Profil" 
                 class="w-10 h-10 rounded-full mr-3">
                 <span>{{ Auth::user()->name }}</span>

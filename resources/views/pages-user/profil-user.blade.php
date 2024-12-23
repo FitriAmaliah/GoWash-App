@@ -23,7 +23,7 @@
         
         <!-- Profile Details -->
         <div class="mt-6 space-y-4">
-            @foreach (['Nama Admin' => Auth::user()->name, 'Email' => Auth::user()->email, 'Nomor Telepon' => Auth::user()->phone ?? 'Belum Ditambahkan', 'Alamat' => Auth::user()->address ?? 'Belum Ditambahkan', 'Tanggal Bergabung' => Auth::user()->created_at->format('d M Y'), 'Status' => Auth::user()->is_active ? 'Aktif' : 'Tidak Aktif'] as $title => $value)
+            @foreach (['Nama' => Auth::user()->name, 'Email' => Auth::user()->email, 'Nomor Telepon' => Auth::user()->phone ?? 'Belum Ditambahkan', 'Alamat' => Auth::user()->address ?? 'Belum Ditambahkan', 'Tanggal Bergabung' => Auth::user()->created_at->format('d M Y'), 'Status' => Auth::user()->is_active ? 'Aktif' : 'Tidak Aktif'] as $title => $value)
                 <div class="flex items-center bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg shadow-md">
                     <div class="flex-shrink-0 bg-indigo-500 text-white p-2 rounded-lg">
                         <i class="fas fa-info-circle"></i> <!-- Update icon accordingly -->

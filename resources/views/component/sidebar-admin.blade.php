@@ -20,25 +20,27 @@
             class="w-10 h-10 rounded-full mr-3">
         </div>
 
-            <!-- Dropdown Menu (Only visible on larger screens) -->
-        <div class="relative hidden lg:block">
-            <button class="flex items-center text-white focus:outline-none" onclick="ProfileDropdown(event)">
-                <img 
-                src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/logo.jpg' }}" 
-                alt="Foto Profil" 
-                class="w-10 h-10 rounded-full mr-3">
-                <span>{{ Auth::user()->name }}</span>
-                <!-- Tanda Panah ke Bawah -->
-                <i class="fas fa-chevron-down ml-2"></i> <!-- Ikon panah ke bawah -->
-            </button>
-            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden" id="dropdown-menu">
-                <a href="profile-admin" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profil Saya</a>
-                <a href="edit-profile" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Edit Profile</a>
-            </div>
-        </div>
+<!-- Dropdown Menu (Only visible on larger screens) -->
+<div class="relative hidden lg:block">
+    <button 
+        class="flex items-center text-white focus:outline-none" 
+        onclick="ProfileDropdown(event)">
+        <img 
+            src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/logo.jpg' }}" 
+            alt="Foto Profil" 
+            class="w-10 h-10 rounded-full mr-3">
+        <span>{{ Auth::user()->name }}</span>
+        <!-- Tanda Panah -->
+        <i class="fas fa-chevron-down ml-2" id="arrow-icon"></i>
+    </button>
+    <div 
+        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden" 
+        id="dropdown-menu">
+        <a href="profile-admin" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profil Saya</a>
+        <a href="edit-profile" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Edit Profile</a>
     </div>
+</div>
 </nav>
-
 
   <!-- Sidebar -->
 <div class="flex min-h-screen">
@@ -83,13 +85,13 @@
                 </a>
                 <div id="sidebarDropdown" class="left-0 hidden mt-1 w-48 bg-indigo-500 text-white rounded-md shadow-lg z-10">
                     <div class="py-1" role="none">
-                        <a href="data-layanan" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
+                        <a href="{{ route('data-layanan') }}" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                             </svg>
                             <p>Data Layanan</p>
                         </a>
-                        <a href="data-transaksi" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
+                        <a href="{{ route('data.transaksi') }}"  class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                             </svg>
@@ -101,7 +103,7 @@
                             </svg>
                             <p>Data Pemesanan</p>
                         </a>
-                        <a href="data-pelanggan" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
+                        <a href="{{ route('data.pelanggan') }}"  class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                             </svg>
@@ -123,13 +125,13 @@
                     </a>
                     <div id="dropdownMenu" class="left-0 hidden mt-1 w-48 bg-indigo-500 text-white rounded-md shadow-lg z-10">
                         <div class="py-1" role="none">
-                            <a href="manajemen-pengguna" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
+                            <a href="{{ route('manajemen-pengguna') }}"  class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-w-6 h-6 text-white">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                   </svg>                                  
                                 <p>Manajemen Pengguna</p>
                             </a>
-                            <a href="manajemen-karyawan" class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
+                            <a href="{{ route('manajemen-karyawan') }}"  class="flex space-x-2 px-4 py-2 hover:bg-blue-600 rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-w-6 h-6 text-white">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                   </svg>                                  
@@ -146,7 +148,7 @@
                 </a>
             </li>
             <li> --> 
-                <a href="laporan" class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
+                <a href="{{ route('laporan') }}" class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-w-6 h-6 text-white">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12" />
                       </svg>                                           
@@ -154,7 +156,7 @@
                 </a>
             </li>
             <li>
-                <a href="ulasan-pengguna" class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
+                <a href="{{ route('pages-admin.ulasan.pengguna') }}" class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
                       </svg>                                           
@@ -471,5 +473,26 @@ function ProfileDropdown(event) {
     dropdownMenu.classList.toggle('hidden'); // Menyembunyikan atau menampilkan dropdown
 }
 
+function ProfileDropdown(event) {
+        // Mencegah perilaku default tombol
+        event.preventDefault();
+
+        // Dropdown menu
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        // Tanda panah
+        const arrowIcon = document.getElementById('arrow-icon');
+
+        // Toggle visibility dropdown menu
+        if (dropdownMenu.classList.contains('hidden')) {
+            dropdownMenu.classList.remove('hidden');
+            arrowIcon.classList.remove('fa-chevron-down');
+            arrowIcon.classList.add('fa-chevron-up');
+        } else {
+            dropdownMenu.classList.add('hidden');
+            arrowIcon.classList.remove('fa-chevron-up');
+            arrowIcon.classList.add('fa-chevron-down');
+        }
+    }
 
     </script>

@@ -16,19 +16,22 @@
                 <h5 class="text-2xl font-semibold text-gray-700">Status Pemesanan</h5>
             </div>
 
-            <!-- Input Pencarian -->
-            <div class="relative w-full max-w-xs mb-6">
-                <input 
-                    id="search-input" 
-                    type="text" 
-                    placeholder="Cari status pemesanan..." 
-                    class="block w-full pl-10 pr-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-300 transition duration-200 ease-in-out hover:border-blue-400"
-                    onkeyup="searchTable()"
-                />
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-            </div>       
+               <!-- Search Input -->
+               <div class="flex items-center w-full sm:w-auto">
+                <form action="{{ route('pages-user.status-pemesanan') }}" method="GET" class="relative w-full max-w-xs">
+                    <input 
+                        type="text" 
+                        name="search"
+                        value="{{ request('search') }}" 
+                        placeholder="Cari jenis layanan..." 
+                        class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                    />
+                    <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                    </span>
+                </form>
+            </div>     
 
             <!-- Table -->
             <div class="max-w-4xl mx-auto mt-10">
@@ -72,7 +75,7 @@
                                 <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
                                     <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
                                         <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
-                                        <p><strong>No:</strong>{{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p>
+                                        <!--<p><strong>No:</strong>{{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p>-->
                                         <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
                                         <p><strong>Tanggal Pesan:</strong> {{ $order->tanggal }}</p>
                                         <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
@@ -91,6 +94,12 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                <!-- Link Pagination -->
+                <div class="mt-4">
+                    {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
+                     </div>   
+                    </div>
                 </div>
             </div>
         </div>

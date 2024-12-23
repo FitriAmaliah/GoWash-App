@@ -15,8 +15,11 @@
 <nav class="bg-indigo-600 shadow-md fixed w-full top-0 z-50">
     <div class="container mx-auto flex justify-between items-center p-4">
         <a href="#" class="flex items-center text-white text-2xl font-bold">
-            <img src="/assets/logo.jpg" alt="Logo" class="w-10 h-10 rounded-full mr-3">
-            GoWash
+            <!-- Container with white circle background for the logo -->
+            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center">
+                <img src="/assets/logo-aplikasi.png" alt="Logo" class="w-8 h-8 rounded-full">
+            </div>
+            <span class="ml-4">GoWash</span> <!-- Add margin to the left of the text -->
         </a>
         <div class="hidden md:flex justify-center space-x-6">
             <a href="#beranda" class="text-white hover:text-gray-100 transition">Beranda</a>
@@ -45,10 +48,10 @@
 <section id="tentang" class="py-20 bg-white" data-aos="fade-up">
     <div class="container mx-auto">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-indigo-500">Tentang Kami</h2>
+            <h2 class="text-4xl font-bold text-indigo-500">Tentang</h2>
             <p class="text-gray-600 mt-4">
                 GoWash adalah aplikasi booking layanan cuci motor dan mobil yang memudahkan pengguna untuk mendapatkan kendaraan bersih dan berkilau kapan saja dan di mana saja. Dengan GoWash, pengguna dapat memilih berbagai layanan cuci, dari cuci standar hingga detailing lengkap, sesuai kebutuhan mereka.
-                </p>
+            </p>
         </div>
     </div>
 </section>
@@ -92,8 +95,6 @@
     </div>
 </section>
 
-
-
 <!-- Kontak Section -->
 <section id="kontak" class="container mx-auto py-20 bg-white" data-aos="fade-up">
     <h2 class="text-3xl font-bold text-center mb-10 text-indigo-500">Hubungi Kami</h2>
@@ -103,16 +104,12 @@
             <h3 class="text-2xl font-semibold text-indigo-500">Informasi Kontak</h3>
             <p class="text-gray-600">Silakan hubungi kami melalui informasi di bawah ini untuk pertanyaan lebih lanjut.</p>
             <div>
-                <p class="text-lg font-medium text-gray-800">Alamat:</p>
-                <p class="text-gray-600">Jl. Kebersihan No. 10, Jakarta</p>
-            </div>
-            <div>
                 <p class="text-lg font-medium text-gray-800">Email:</p>
-                <p class="text-gray-600">info@washgo.com</p>
+                <p class="text-gray-600">gowash@gmail.com</p>
             </div>
             <div>
                 <p class="text-lg font-medium text-gray-800">Telepon:</p>
-                <p class="text-gray-600">+62 123 456 789</p>
+                <p class="text-gray-600">+62 895 0641 8632</p>
             </div>
         </div>
 
@@ -135,7 +132,6 @@
     </div>
 </section>
 
-
 <!-- Footer -->
 <footer class="bg-indigo-600 text-white py-6">
     <div class="container mx-auto text-center">
@@ -148,5 +144,6 @@
 <script>
     AOS.init({ duration: 1000, once: false });
 </script>
+
 </body>
 </html>

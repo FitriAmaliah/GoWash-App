@@ -84,7 +84,7 @@ Route::get('/pages-admin/profile-admin', [AdminController::class, 'profile'])->n
 Route::get('/pages-admin/edit-profile', [AdminController::class, 'editprofile'])->name('edit.profile');
 
 Route::get('/pages-admin/data-layanan', [AdminController::class, 'datalayanan'])->name('data.layanan');
-Route::get('/pages-admin/data-layanan', [LayananController::class, 'index'])->name('pages-admin.data-layanan');
+Route::get('/pages-admin/data-layanan', [LayananController::class, 'index'])->name('data-layanan');
 Route::get('/pages-admin/tambah-layanan', [AdminController::class, 'tambahlayanan'])->name('tambah.layanan');
 Route::get('/pages-admin/data-pemesanan', [AdminController::class, 'datapemesanan'])->name('data.pemesanan');
 Route::get('/pages-admin/tambah-pemesanan', [AdminController::class, 'tambahpemesanan'])->name('tambah.pemesanan');
@@ -107,10 +107,9 @@ Route::get('/pages-admin/tambah-pelanggan', [AdminController::class, 'tambahpela
 Route::get('/pages-admin/laporan', [AdminController::class, 'laporan'])->name('laporan');
 
 Route::get('/pages-admin/edit-layanan', [AdminController::class, 'editlayanan'])->name('edit.layanan');
-Route::get('/pages-admin/print-layanan', [AdminController::class, 'printlayanan'])->name('print.layanan');
-Route::get('/pages-admin/ulasan-pengguna', [AdminController::class, 'ulasanpengguna'])->name('ulasan.pengguna');
+Route::get('/detail-layanan/{id}', [AdminController::class, 'DetailLayanan'])->name('detail.order');
+Route::get('/pages-admin/ulasan-pengguna', [AdminController::class, 'ulasanpengguna'])->name('pages-admin.ulasan.pengguna');
 Route::get('/pages-admin/pendapatan', [AdminController::class, 'pendapatan'])->name('pendapatan');
-
 
 //ROUTE UNTUK BAGIAN DATABASE ADMIN
 
@@ -129,7 +128,6 @@ Route::put('/layanan/{id}', [LayananController::class, 'update'])->name('update.
 // Rute untuk menghapus layanan
 Route::delete('/layanan/{id}', [LayananController::class, 'destroy'])->name('layanan.destroy');
 
-
 // route manajemen pengguna
 
 // Route untuk menampilkan halaman manajemen pengguna
@@ -144,10 +142,8 @@ Route::post('/tambah-pengguna', [ManajemenPenggunaController::class, 'store'])->
 // Route untuk menghapus pengguna
 Route::delete('/hapus-pengguna/{id}', [ManajemenKaryawanController::class, 'destroy'])->name('hapus.pengguna');
 
-
 // rote data transaksi 
 Route::post('/transaksi/store', [AdminController::class, 'store'])->name('store-transaksi');
-
 
 // route untuk manajemen karyawan
 
@@ -168,6 +164,15 @@ Route::get('/admin/profile', [AdminController::class, 'show'])->name('admin.prof
 Route::get('/admin/profile/edit', [AdminController::class, 'edit'])->name('admin.profile.edit'); // Untuk form edit
 Route::match(['PUT', 'PATCH'], '/admin/profile/update', [AdminController::class, 'update'])->name('admin.profile.update');
 
+// route untuk search data admin
+Route::get('/admin/data-layanan', [AdminController::class, 'indexlayanan'])->name('pages-admin.data-layanan');
+Route::get('/admin/data-transaksi', [AdminController::class, 'indextransaksi'])->name('pages-admin.data-transaksi');
+Route::get('/admin/data-pemesanan', [AdminController::class, 'indexpemesanan'])->name('pages-admin.data-pemesanan');
+Route::get('/admin/data-pelanggan', [AdminController::class, 'indexpelanggan'])->name('pages-admin.data-pelanggan');
+Route::get('/admin/manajemen-pengguna', [AdminController::class, 'indexmanajemenpengguna'])->name('pages-admin.manajemen-pengguna');
+Route::get('/admin/manajemen-karyawan', [AdminController::class, 'indexmanajemenkaryawan'])->name('pages-admin.manajemen-karyawan');
+Route::get('/admin/laporan', [AdminController::class, 'indexmanajemenlaporan'])->name('pages-admin.laporan');
+
 // route untuk tampilan profile user
 
 Route::get('/user/profile', [UserController::class, 'show'])->name('profil.user');
@@ -183,7 +188,6 @@ Route::post('/orders/{id}/status', [KaryawanController::class, 'updateOrderStatu
 Route::post('/orders/{id}/set-selesai', [KaryawanController::class, 'setOrderToSelesai'])->name('orders.setSelesai');
 // Halaman riwayat pengerjaan
 Route::get('/riwayat-pengerjaan', [KaryawanController::class, 'index'])->name('riwayat.pengerjaan');
-
 
 // Route to handle saving the profile
 Route::middleware(['auth'])->group(function () {
@@ -214,10 +218,19 @@ Route::post('/payment/success', [UserController::class, 'paymentSuccess'])->name
 Route::get('/pages-user/pelanggan', [UserController::class, 'pelanggan'])->name('pelanggan');
 
 // route ulasan user
-Route::get('/ulasan', [UserController::class, 'index'])->name('ulasan.index');
-Route::post('/ulasan', [UserController::class, 'ulasanStore'])->name('ulasan.store');
-Route::put('/ulasan/{id}', [UlasanController::class, 'updateulasan'])->name('ulasan.update');
-Route::delete('/ulasan/{id}', [UlasanController::class, 'destroy'])->name('ulasan.destroy');
+// Rute untuk menampilkan daftar ulasan
+Route::get('ulasan', [UlasanController::class, 'index'])->name('ulasan.index');
+
+Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+
+// Rute untuk menampilkan form edit ulasan
+Route::get('ulasan/{id}/edit', [UlasanController::class, 'edit'])->name('ulasan.edit');
+
+// Rute untuk memperbarui ulasan
+Route::put('ulasan/{id}', [UlasanController::class, 'update'])->name('ulasan.update');
+
+// Rute untuk menghapus ulasan
+Route::delete('ulasan/{id}', [UlasanController::class, 'destroy'])->name('ulasan.destroy');
 
 // route pemesanan
 Route::get('/pemesanan/{id}', [PemesananController::class, 'create'])->name('pages-user.form-pemesanan');
@@ -227,6 +240,16 @@ Route::post('/orders/update-status/{order}', [PemesananController::class, 'updat
 Route::post('/update-payment-status', [PemesananController::class, 'updatePaymentStatus'])->name('update.payment.status');
 Route::get('/tambah-pemesanan', [AdminController::class, 'showAddOrderForm'])->name('tambah-pemesanan');
 Route::post('/tambah-pemesanan', [AdminController::class, 'storeOrder'])->name('store-pemesanan');
+Route::post('/midtrans/callback', [UserController::class, 'handleCallback']);
+
+
+// route search user
+// Rute untuk menampilkan layanan yang tersedia
+Route::get('/user/layanan/tersedia', [UserController::class, 'indexlayanantersedia'])->name('pages-user.layanan-tersedia');
+// Rute untuk menampilkan status pemesanan
+Route::get('/user/layanan/status-pemesanan', [UserController::class, 'indexstatuspemesanan'])->name('pages-user.status-pemesanan');
+// Rute untuk menampilkan riwayat pemesanan
+Route::get('/user/layanan/riwayat-pemesanan', [UserController::class, 'indexriwayatpemesanan'])->name('pages-user.riwayat-pemesanan');
 
 //tampilan route role karyawan
 Route::get('/pages-karyawan/dashboard-karyawan', [KaryawanController::class, 'dashboard'])->name('dashboard.karyawan');
@@ -236,6 +259,9 @@ Route::get('/pages-karyawan/detail-pesanan', [KaryawanController::class, 'detail
 Route::get('/pages-karyawan/riwayat-pengerjaan', [KaryawanController::class, 'riwayatpengerjaan'])->name('riwayat.pengerjaan');
 Route::get('/pages-karyawan/profil-karyawan', [KaryawanController::class, 'profilkaryawan'])->name('profil.karyawan');
 Route::get('/pages-karyawan/edit-profil', [KaryawanController::class, 'editprofil'])->name('edit.profil');
-Route::get('/pages-karyawan/ulasan-pengguna', [KaryawanController::class, 'ulasanpengguna'])->name('ulasan.pengguna');
+Route::get('/pages-karyawan/ulasan-pengguna', [KaryawanController::class, 'ulasanpengguna'])->name('pages-karyawan.ulasan.pengguna');
 
-
+// route search karyawan 
+Route::get('/karyawan/tugas-harian', [KaryawanController::class, 'indextugasharian'])->name('pages-karyawan.tugas-harian');
+Route::get('/karyawan/update-status', [KaryawanController::class, 'indexupdatestatus'])->name('pages-karyawan.update-status');
+Route::get('/karyawan/riwayat-pengerjaan', [KaryawanController::class, 'indexriwayatpengerjaan'])->name('pages-karyawan.riwayat-pengerjaan');

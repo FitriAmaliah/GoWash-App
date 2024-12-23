@@ -46,13 +46,13 @@
             </div>
 
             <!-- Status -->
-            <div class="mb-4">
+           <!-- <div class="mb-4">
                 <label for="status" class="block text-gray-600 font-medium">Status</label>
                 <select id="status" name="is_active" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="1" {{ Auth::user()->is_active ? 'selected' : '' }}>Aktif</option>
                     <option value="0" {{ !Auth::user()->is_active ? 'selected' : '' }}>Tidak Aktif</option>
                 </select>
-            </div>
+            </div> -->
 
             <!-- Tombol Simpan -->
             <div class="flex justify-center">

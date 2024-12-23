@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,4 +60,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pemesanan::class, 'user_id');
     }
+
+    public function orders()
+{
+    return $this->hasMany(Pemesanan::class);
+}
+
 }

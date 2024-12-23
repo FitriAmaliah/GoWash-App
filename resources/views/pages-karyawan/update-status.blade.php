@@ -23,23 +23,26 @@
             </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="flex justify-between items-center mb-4">
-            <div class="relative w-full max-w-xs">
-            <!-- Tabel Data Transaksi -->
-              <input 
-                    id="search-input" 
-                    type="text" 
-                    placeholder="Carinama pelanggan..." 
-                    class="block w-full pl-10 pr-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
-                    onkeyup="searchTable()"
-                />
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                </span>
-            </div>
-        </div>   
-
+            <!-- Search Input -->
+            <div class="flex justify-between items-center p-4">
+                <div class="flex justify-center mb-4">
+                    <div class="relative w-full max-w-xs">
+                        <form action="{{ route('pages-karyawan.update-status') }}" method="GET">
+                            <input 
+                                id="search-input" 
+                                type="text" 
+                                name="search"
+                                value="{{ request('search') }}" 
+                                placeholder="Cari nama pelanggan..." 
+                                class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                            />
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                            </span>
+                        </form>
+                    </div>
+                </div>      
+            </div>    
         <!-- Table -->
         <div class="overflow-x-auto">
             <table class="w-full bg-white rounded-lg shadow-md">
@@ -50,44 +53,46 @@
                         <th class="py-3 px-4 text-center text-sm font-semibold">Jenis Layanan</th>
                         <th class="py-3 px-4 text-center text-sm font-semibold">Tanggal Pesan</th>
                         <th class="py-3 px-4 text-center text-sm font-semibold">Metode Pembayaran</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Status</th>
+                        <th class="py-3 px-4 text-center text-sm font-semibold">Update Status</th>
                         <th class="py-3 px-4 text-center text-sm font-semibold">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
                     @forelse($orders->where('status', '!=', 'Selesai') as $index => $order)
                         <tr class="border-t">
-                            <td class="text-center py-4 px-4">{{ $index + 1 }}</td>
+                            <td class="text-center py-4 px-4">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
                             <td class="text-center py-4 px-4">{{ $order->user->name ?? 'Tidak diketahui' }}</td>
                             <td class="text-center py-4 px-4">{{ $order->layanan->nama_layanan }}</td>
                             <td class="text-center py-4 px-4">{{ $order->tanggal }}</td>
                             <td class="text-center py-4 px-4">{{ $order->metode_pembayaran }}</td>
                             <td class="text-center py-3 px-3">
-                                <span class="px-2 py-1 text-sm text-white rounded-full {{ $order->status === 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                                <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-yellow-500 rounded-full {{ $order->status === 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }}">
                                     {{ $order->status }}
                                 </span>
                             </td>
                             <td class="text-center py-4 px-4">
-                                <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}" class="inline-block">
-                                    @csrf
-                                    <button 
-                                        type="submit" 
-                                        name="status" 
-                                        value="Proses" 
-                                        class="px-4 py-2 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600 {{ $order->status === 'Proses' ? 'cursor-not-allowed opacity-50' : '' }}" 
-                                        {{ $order->status === 'Proses' ? 'disabled' : '' }}>
-                                        Proses
-                                    </button>
-                                </form>
-                                <form method="POST" action="{{ route('orders.setSelesai', $order->id) }}" class="inline-block">
-                                    @csrf
-                                    <button 
-                                        type="submit" 
-                                        class="px-4 py-2 text-sm text-white bg-green-500 rounded hover:bg-green-600 {{ $order->status === 'Selesai' ? 'cursor-not-allowed opacity-50' : '' }}" 
-                                        {{ $order->status === 'Selesai' ? 'disabled' : '' }}>
-                                        Selesai
-                                    </button>
-                                </form>
+                                <div class="flex justify-between items-center space-x-4">
+                                    <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}">
+                                        @csrf
+                                        <button 
+                                            type="submit" 
+                                            name="status" 
+                                            value="Proses" 
+                                            class="flex-1 px-6 py-2 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600 {{ $order->status === 'Proses' ? 'cursor-not-allowed opacity-50' : '' }}" 
+                                            {{ $order->status === 'Proses' ? 'disabled' : '' }}>
+                                            Proses
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('orders.setSelesai', $order->id) }}">
+                                        @csrf
+                                        <button 
+                                            type="submit" 
+                                            class="flex-1 px-6 py-2 text-sm text-white bg-green-500 rounded hover:bg-green-600 {{ $order->status === 'Selesai' ? 'cursor-not-allowed opacity-50' : '' }}" 
+                                            {{ $order->status === 'Selesai' ? 'disabled' : '' }}>
+                                            Selesai
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -98,33 +103,25 @@
                 </tbody>
             </table>
 
-              <!-- Pagination -->
-    <div class="mt-4">
-        {{ $orders->links('pagination::tailwind') }}
+               <!-- Link Pagination -->
+        <div class="mt-4">
+            {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
+        </div>
+
+<!-- Popup Notification -->
+@if(session('success'))
+    <div id="popup-success" class="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 class="text-lg font-bold text-green-500 mb-4">Berhasil!</h3>
+            <p>{{ session('success') }}</p>
+            <button 
+                class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                onclick="document.getElementById('popup-success').style.display='none';">
+                Tutup
+            </button>
+        </div>
     </div>
-</div>
-</div>
-</div>
-
-
-
-        <!-- Popup Notification -->
-        @if(session('success'))
-            <div id="popup-success" class="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                    <h3 class="text-lg font-bold text-green-500 mb-4">Berhasil!</h3>
-                    <p>{{ session('success') }}</p>
-                    <button 
-                        class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        onclick="document.getElementById('popup-success').style.display='none';">
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        @endif
-    </div>
-</div>
-
+@endif
 
 <script>
     function searchTable() {

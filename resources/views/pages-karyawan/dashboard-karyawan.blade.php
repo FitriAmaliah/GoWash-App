@@ -26,7 +26,7 @@
             <div class="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 p-4 rounded shadow flex justify-between items-center">
                 <div>
                     <h2 class="text-white font-semibold">Total Tugas Hari Ini</h2>
-                    <p class="text-2xl text-white font-bold">12</p>
+                    <p class="text-2xl text-white font-bold">{{ $totaltugashariini }}</p>
                 </div>
                 <i class="fas fa-tasks fa-5x text-white"></i>
             </div>
@@ -35,7 +35,7 @@
             <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 p-4 rounded shadow flex justify-between items-center">
                 <div>
                     <h2 class="text-white font-semibold">Tugas Dimulai</h2>
-                    <p class="text-2xl text-white font-bold">8</p>
+                    <p class="text-2xl text-white font-bold">{{ $tugasdimulai }}</p>
                 </div>
                 <i class="fas fa-play-circle fa-5x text-white"></i>
             </div>
@@ -44,7 +44,7 @@
             <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-4 rounded shadow flex justify-between items-center">
                 <div>
                     <h2 class="text-white font-semibold">Tugas Selesai</h2>
-                    <p class="text-2xl text-white font-bold">5</p>
+                    <p class="text-2xl text-white font-bold">{{ $tugasselesai }}</p>
                 </div>
                 <i class="fas fa-check-circle fa-5x text-white"></i>
             </div>
