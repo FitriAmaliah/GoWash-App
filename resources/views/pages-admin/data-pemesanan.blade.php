@@ -45,6 +45,7 @@
                 
             <!-- Tabel Data Pemesanan -->
             <div class="overflow-x-auto">
+            <div class="min-w-full w-64">
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
                     <thead class="bg-indigo-500 text-white">
                         <tr>
@@ -66,10 +67,9 @@
                             <td class="py-3 px-4">{{ $order->tanggal }}</td>
                             <td class="py-3 px-4">{{ $order->metode_pembayaran }}</td>
                             <td class="py-3 px-4">
-                                <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-yellow-200 rounded-full 
-                                bg-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-200 
-                                text-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-800">
-                                {{ $order->status }}
+                                 <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-500 rounded-full">
+                                    {{ $order->status == 'Selesai' ? 'Selesai' : 'Belum selesai' }}
+                                </span>
                             </span>                                  
                             </td>
                             <td class="text-center py-4 px-4">
@@ -87,6 +87,8 @@
                     @endforelse
                     </tbody>              
                 </table>
+            </div>
+        </div>
                    
         <!-- Link Pagination -->
         <div class="mt-4">
@@ -95,8 +97,8 @@
 
 <!-- Modal untuk Detail Pesanan -->
 @foreach ($orders as $order)
-    <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
+    <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-3/4 md:w-1/2 lg:w-1/3 max-w-lg mx-4 sm:mx-8 md:mx-16">
             <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
             <p><strong>Nama Pelanggan:</strong> {{ optional($order->user)->name ?? 'Tidak diketahui' }}</p>
             <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>

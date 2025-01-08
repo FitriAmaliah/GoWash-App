@@ -11,16 +11,13 @@
     <div class="bg-white shadow-lg rounded-lg p-6 max-w-6xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Update Status</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Update Status pengerjaan</h1>
         </div>
 
-        <!-- Informational Notice -->
-        <div class="flex items-start bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-6 shadow-sm">
+       <!-- Informational Notice -->
+        <div class="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-6 shadow-sm">
             <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
-            <div>
-                <p class="font-semibold">Pemberitahuan:</p>
-                <p>Perbarui status pesanan dengan klik "Proses" saat mengerjakan dan "Selesai" setelah selesai mengerjakan. Pastikan status diperbarui agar proses lancar.</p>
-            </div>
+            <p><span class="font-semibold">Info:</span> Klik "Proses" saat dikerjakan dan "Selesai" setelah selesai. Perbarui status untuk kelancaran proses pemesanan.</p>
         </div>
 
             <!-- Search Input -->
@@ -45,6 +42,7 @@
             </div>    
         <!-- Table -->
         <div class="overflow-x-auto">
+            <div class="min-w-full w-64">
             <table class="w-full bg-white rounded-lg shadow-md">
                 <thead class="bg-indigo-500 text-white">
                     <tr>
@@ -102,6 +100,8 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
 
                <!-- Link Pagination -->
         <div class="mt-4">

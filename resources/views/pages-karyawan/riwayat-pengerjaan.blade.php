@@ -13,7 +13,7 @@
         <div class="container mx-auto">
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">
-                <h5 class="text-2xl font-semibold text-gray-700">Riwayat Pengerjaan Karyawan</h5>
+                <h5 class="text-2xl font-semibold text-gray-700">Riwayat Pengerjaan</h5>
             </div>
 
             <!-- Search Input -->
@@ -39,6 +39,7 @@
             <!-- Table -->
             <div class="max-w-4xl mx-auto mt-10">
                 <div class="overflow-x-auto">
+                    <div class="min-w-full w-64">
                     <table class="w-full bg-white rounded-lg shadow-md">
                         <thead class="bg-gray-200">
                             <tr>
@@ -90,62 +91,68 @@
                                     </td>
                                 </tr>
 
-                                <!-- Modal untuk Detail Pemesanan -->
-                                <div 
-                                    id="detail-modal-{{ $order->id }}" 
-                                    class="detail-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
-                                >
-                                    <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
-                                        <div class="flex justify-between items-center">
-                                            <h2 class="text-lg font-semibold">Detail Pemesanan</h2>
-                                            <button 
-                                                onclick="closeModal({{ $order->id }})" 
-                                                class="text-gray-500 hover:text-gray-700"
-                                            >
-                                                &times;
-                                            </button>
-                                        </div>
-                                        <div class="mt-4">
-                                             <!--<p><strong>No:</strong> {{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p> -->
-                                            <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
-                                            <p><strong>Tanggal Pemesanan:</strong> {{ $order->tanggal }}</p>
-                                            <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
-                                            <p>
-                                                <strong>Status Pemesanan:</strong>
-                                                @if($order->status === 'Selesai')
-                                                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-green-500 rounded-full">
-                                                        Selesai
-                                                    </span>
-                                                @else
-                                                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-yellow-500 rounded-full">
-                                                        Belum Selesai
-                                                    </span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                        <div class="mt-6 text-right">
-                                            <button 
-                                                onclick="closeModal({{ $order->id }})" 
-                                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                            >
-                                                Tutup
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    <!-- Pagination -->
-                    <div class="mt-4">
-                        {{ $orders->links('pagination::tailwind') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                            </button>
+                        </div>
+                    </td>                                    
+                </tr>
+                @empty
+                <tr>
+                <td colspan="7" class="text-center py-4 px-4 text-gray-500">nama pelanggan tdak tersedia</td>
+            </tr>
+        @endforelse
+        </tbody>              
+    </table>
 </div>
+</div>              
+<!-- Link Pagination -->
+<div class="mt-4">
+{{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
+</div>
+
+                    <!-- Modal untuk Detail Pemesanan -->
+                    @foreach ($orders as $order)
+                    <div 
+                        id="detail-modal-{{ $order->id }}" 
+                        class="detail-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+                    >
+                        <div class="bg-white rounded-lg shadow-lg max-w-[90%] sm:max-w-md w-full p-6 sm:p-8">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-lg sm:text-xl font-semibold">Detail Pemesanan</h2>
+                                <button 
+                                    onclick="closeModal({{ $order->id }})" 
+                                    class="text-gray-500 hover:text-gray-700"
+                                >
+                                    &times;
+                                </button>
+                            </div>
+                            <div class="mt-4">
+                                <!--<p><strong>No:</strong> {{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p> -->
+                                <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
+                                <p><strong>Tanggal Pemesanan:</strong> {{ $order->tanggal }}</p>
+                                <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
+                                <p>
+                                    <strong>Status Pemesanan:</strong>
+                                    @if($order->status === 'Selesai')
+                                        <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-green-500 rounded-full">
+                                            Selesai
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-yellow-500 rounded-full">
+                                            Belum Selesai
+                                        </span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="mt-6 text-right">
+                                <button 
+                                    onclick="closeModal({{ $order->id }})" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                >
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                        @endforeach
 
 <script>
     function searchTable() {

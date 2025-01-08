@@ -7,6 +7,9 @@ use App\Models\User;
 use App\Models\Ulasan;
 use App\Models\Layanan;
 use App\Models\Pemesanan;
+use Midtrans\Config;
+use Midtrans\Snap;
+ use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 class AdminController extends Controller
 {
@@ -44,7 +47,7 @@ class AdminController extends Controller
     public function datalayanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $layanans = Layanan::paginate(2); // Menampilkan 4 komentar per halaman
+        $layanans = Layanan::paginate(5); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-layanan', compact('layanans'));
     }
     
@@ -102,34 +105,184 @@ class AdminController extends Controller
     
     public function cetakPdf(Request $request)
     {
-        // Ambil data order untuk laporan
-        $orders = Pemesanan::all(); // Atau sesuaikan dengan data yang diperlukan
-
+        // Cek apakah ada filter tanggal
+        $startDate = $request->get('start_date');
+        
+        // Jika ada filter tanggal
+        if ($startDate) {
+            // Filter data berdasarkan tanggal yang dipilih
+            $orders = Pemesanan::whereDate('tanggal', '=', $startDate)->get();
+        } else {
+            // Jika tidak ada filter tanggal, ambil semua data
+            $orders = Pemesanan::all();
+        }
+        
         // Memasukkan data ke view untuk PDF
         $pdf = PDF::loadView('print.print-laporan', compact('orders'));
-
+        
         // Menghasilkan file PDF dan mendownloadnya
         return $pdf->download('laporan-transaksi.pdf');
     }
-
-        public function filter(Request $request)
+    
+      
+    public function filter(Request $request)
     {
+        // Ambil parameter start_date dari request
         $startDate = $request->get('start_date');
-        $orders = Pemesanan::whereDate('tanggal', '>=', $startDate)->get(); // Sesuaikan dengan logika filter
-
+    
+        // Jika start_date ada, filter data berdasarkan tanggal
+        if ($startDate) {
+            $orders = Pemesanan::whereDate('tanggal', '=', $startDate)->get();  // Memastikan tanggal sama dengan start_date
+        } else {
+            // Jika tidak ada filter tanggal, ambil semua data
+            $orders = Pemesanan::all();
+        }
+    
+        // Kembalikan data yang sudah difilter atau seluruh data dalam format JSON
         return response()->json($orders);
-    }
+    }    
 
     public function datatransaksi()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-transaksi', compact('orders'));
     }
 
     public function tambahtransaksi()
     {
-        return view('pages-admin.tambah-transaksi'); // Profile view
+        // Mengambil semua data pengguna
+        $users = User::where('role', 'user')->get();
+        $layanan = Layanan::all();
+
+        return view('pages-admin.tambah-transaksi', compact('users', 'layanan')); // Profile view
+    }
+
+        public function storetransaksibyadmin(Request $request)
+    {
+        try {
+            $user = User::findOrFail($request->user_id);
+            dd($user);
+            if (!$user) {
+                throw new \Exception('User not authenticated');
+            }
+
+            // Validasi data
+            $validated = $request->validate([
+                'layanan_id' => 'required|exists:layanan,id',
+                'tanggal' => 'required|date',
+                'waktu' => 'required|date_format:H:i',
+                'metode_pembayaran' => 'required|in:cash,digital',
+            ]);
+
+            $layananId = $validated['layanan_id'];
+            $tanggal = $validated['tanggal'];
+            $waktu = $validated['waktu'];
+            $metodePembayaran = $validated['metode_pembayaran'];
+
+            // Cari layanan
+            $layanan = Layanan::findOrFail($layananId);
+            if (!$layanan) {
+                throw new \Exception('Layanan not found');
+            }
+
+            $biaya = $layanan->harga; // Sesuaikan dengan nama kolom harga pada model Layanan
+
+            // Simpan pemesanan
+            $pemesanan = Pemesanan::create([
+                'layanan_id' => $layananId,
+                'user_id' => $user->id,
+                'tanggal' => $tanggal,
+                'waktu' => $waktu,
+                'status' => 'belum selesai',
+                'metode_pembayaran' => $metodePembayaran,
+                'status_pembayaran' => $metodePembayaran === 'cash' ? 'success' : 'pending',
+                'biaya' => $biaya,
+            ]);
+
+            if ($metodePembayaran === 'cash') {
+                // Jika pembayaran cash, langsung sukses
+                $pemesanan->status = 'belum selesai';
+                $pemesanan->save();
+
+                return response()->json([
+                    'message' => 'Pemesanan berhasil dengan metode cash!',
+                    'pemesanan' => $pemesanan,
+                ]);
+            } elseif ($metodePembayaran === 'digital') {
+                // Konfigurasi Midtrans
+                Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+                Config::$isProduction = false; // Ubah ke true jika dalam mode produksi
+                Config::$isSanitized = true;
+                Config::$is3ds = true;
+
+                // Siapkan data untuk Snap Midtrans
+                $payload = [
+                    'transaction_details' => [
+                        'order_id' => $pemesanan->id,
+                        'gross_amount' => $biaya,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $user->name,
+                        'email' => $user->email,
+                        'phone' => $user->telepon ?? '',
+                    ],
+                    'item_details' => [
+                        [
+                            'id' => $layananId,
+                            'price' => $biaya,
+                            'quantity' => 1,
+                            'name' => $layanan->nama_layanan,
+                        ],
+                    ],
+                ];
+
+                $snapToken = Snap::getSnapToken($payload);
+
+                return response()->json([
+                    'snapToken' => $snapToken,
+                    'pemesanan' => $pemesanan,
+                ]);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Catat error validasi
+            Log::error('Validation Error: ', $e->errors());
+            return response()->json(['error' => 'Validation Error', 'messages' => $e->errors()], 422);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Catat jika model tidak ditemukan
+            Log::error('Model Not Found: ' . $e->getMessage());
+            return response()->json(['error' => 'Data not found'], 404);
+        } catch (\Exception $e) {
+            // Catat error umum lainnya
+            Log::error('Checkout Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
+
+    public function paymentsuccesstransaksibyadmin(Request $request)
+    {
+        try {
+            $orderId = $request->input('order_id');
+
+            // Cari pemesanan berdasarkan order_id
+            $pemesanan = Pemesanan::find($orderId);
+
+            if (!$pemesanan) {
+                throw new \Exception('Pemesanan not found');
+            }
+
+            // Perbarui status pembayaran
+            $pemesanan->status_pembayaran = 'success';
+            $pemesanan->save();
+
+            return response()->json([
+                'message' => 'Pembayaran berhasil!',
+            ]);
+        } catch (\Exception $e) {
+            // Catat error
+            Log::error('Payment Success Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
     }
 
     public function edittransaksi()
@@ -140,7 +293,7 @@ class AdminController extends Controller
     public function datapemesanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-pemesanan', compact('orders'));
     }
 
@@ -183,7 +336,7 @@ class AdminController extends Controller
     public function manajemenkaryawan()
     {
         // Ambil hanya pengguna dengan role 'User' dan tambahkan pagination
-        $users = User::where('role', 'Karyawan')->paginate(2);
+        $users = User::where('role', 'Karyawan')->paginate(10);
         
         // Kirim data ke tampilan
         return view('pages-admin.manajemen-karyawan', compact('users'));
@@ -203,7 +356,7 @@ class AdminController extends Controller
     public function manajemenpengguna()
     {
         // Ambil hanya pengguna dengan role 'User' dan tambahkan pagination
-        $users = User::where('role', 'User')->paginate(5);
+        $users = User::where('role', 'User')->paginate(10);
         
         // Kirim data ke tampilan
         return view('pages-admin.manajemen-pengguna', compact('users'));
@@ -228,7 +381,7 @@ class AdminController extends Controller
     public function datapelanggan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(2); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-pelanggan', compact('orders'));
     }
 
@@ -250,10 +403,10 @@ class AdminController extends Controller
     // Jika tanggal mulai diisi, filter pemesanan berdasarkan tanggal
     if ($startDate) {
         // Mengambil pemesanan yang sesuai dengan tanggal
-        $orders = Pemesanan::whereDate('created_at', $startDate)->paginate(2); // Filter berdasarkan tanggal
+        $orders = Pemesanan::whereDate('created_at', $startDate)->paginate(10); // Filter berdasarkan tanggal
     } else {
         // Jika tidak ada tanggal, ambil semua pemesanan
-        $orders = Pemesanan::paginate(2);
+        $orders = Pemesanan::paginate(10);
     }
 
     return view('pages-admin.laporan', compact('orders'));
@@ -462,8 +615,6 @@ public function indexmanajemenlaporan(Request $request)
 }
 
 
-
-
     public function ulasanpengguna()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
@@ -489,7 +640,7 @@ public function indexmanajemenlaporan(Request $request)
     public function edit()
     {
         $user = auth()->user(); // Ambil data pengguna
-        return view('pages-admin.edit.profile', compact('user')); // Tampilkan form edit
+        return view('pages-admin.edit-profile', compact('user')); // Tampilkan form edit
     }    
 
     public function update(Request $request)

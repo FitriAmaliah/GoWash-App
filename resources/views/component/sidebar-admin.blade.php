@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <!-- Navbar -->
-<nav class="bg-indigo-500 p-4 shadow-md relative z-10">
+<nav class="bg-indigo-500 p-4 shadow-md relative fixed w-full z-10 top-0 left-0">
     <div class="container mx-auto flex justify-between items-center">
         <!-- Hamburger Icon for Mobile (Left side) -->
         <div class="block lg:hidden">
@@ -11,17 +11,18 @@
                 </svg>
             </button>
         </div>
-
-        <!-- Logo and Profile Dropdown (Right side) -->
-        <div class="relative flex items-center">
-            <img 
+        
+    <!-- Logo and Profile Dropdown (Right side) -->
+    <div class="relative flex items-center">
+        <!-- Foto Profil (Hanya tampil di layar desktop dan lebih besar) -->
+         <!-- <img 
             src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/logo.jpg' }}" 
             alt="Foto Profil" 
-            class="w-10 h-10 rounded-full mr-3">
-        </div>
+            class="w-10 h-10 rounded-full mr-3 hidden sm:block"> <!-- Foto hanya muncul di layar sm dan lebih besar -->
+    </div>
 
-<!-- Dropdown Menu (Only visible on larger screens) -->
-<div class="relative hidden lg:block">
+<!-- Dropdown Menu (Visible on all screen sizes) -->
+<div class="relative block">
     <button 
         class="flex items-center text-white focus:outline-none" 
         onclick="ProfileDropdown(event)">
@@ -29,23 +30,27 @@
             src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : '/assets/logo.jpg' }}" 
             alt="Foto Profil" 
             class="w-10 h-10 rounded-full mr-3">
-        <span>{{ Auth::user()->name }}</span>
-        <!-- Tanda Panah -->
+        
+        <!-- Nama Pengguna (Tampil di mobile dan desktop) -->
+        <span class="block text-white sm:inline-block">{{ Auth::user()->name }}</span>
+        
+        <!-- Tanda Panah (Tampil di mobile dan desktop) -->
         <i class="fas fa-chevron-down ml-2" id="arrow-icon"></i>
     </button>
+    
+    <!-- Dropdown Menu (Tampil setelah tombol dropdown diklik) -->
     <div 
         class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden" 
         id="dropdown-menu">
-        <a href="profile-admin" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profil Saya</a>
-        <a href="edit-profile" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Edit Profile</a>
+        <a href="{{ route('admin.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profil Saya</a>
+        <a href="{{ route('admin.profile.edit') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Edit Profile</a>
     </div>
 </div>
 </nav>
 
   <!-- Sidebar -->
-<div class="flex min-h-screen">
+  <div class="flex min-h-screen">
     <aside id="sidebar" class="w-64 bg-indigo-400 p-6 fixed left-0 top-0 h-full z-20 shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 overflow-y-auto" aria-hidden="true">
-        <!-- Close Button (X) for Mobile -->
         <button id="close-sidebar" class="text-white absolute top-4 right-4 lg:hidden" onclick="closeSidebar()">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -163,34 +168,54 @@
                     <span>Ulasan Pengguna</span>
                 </a>
             </li>
-    
-            <li>    
-                <a href="http://127.0.0.1:8000/landing-page" class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
+            <li>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+                   class="flex items-center space-x-3 px-4 py-3 text-white hover:bg-blue-500 rounded">
+                    <!-- Ikon Logout -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48">
-                        <path fill="#ff0000" d="M 11.5 6 C 8.48 6 6 8.48 6 11.5 L 6 36.5 C 6 39.52 8.48 42 11.5 42 L 29.5 42 C 32.52 42 35 39.52 35 36.5 A 1.5 1.5 0 1 0 32 36.5 C 32 37.898 30.898 39 29.5 39 L 11.5 39 C 10.102 39 9 37.898 9 36.5 L 9 11.5 C 9 10.102 10.102 9 11.5 9 L 29.5 9 C 30.898 9 32 10.102 32 11.5 A 1.5 1.5 0 1 0 35 11.5 C 35 8.48 32.52 6 29.5 6 L 11.5 6 z M 33.484 15.484 A 1.5 1.5 0 0 0 32.44 18.061 L 36.879 22.5 L 15.5 22.5 A 1.5 1.5 0 1 0 15.5 25.5 L 36.879 25.5 L 32.44 29.94 A 1.5 1.5 0 1 0 34.561 32.061 L 41.561 25.061 A 1.5 1.5 0 0 0 41.561 22.94 L 34.561 15.94 A 1.5 1.5 0 0 0 33.484 15.484 z"></path>
-                    </svg>                    
+                        <path fill="#ff0000" d="M 11.5 6 C 8.48 6 6 8.48 6 11.5 L 6 36.5 C 6 39.52 8.48 42 11.5 42 
+                        L 29.5 42 C 32.52 42 35 39.52 35 36.5 A 1.5 1.5 0 1 0 32 36.5 C 32 37.898 30.898 39 29.5 39 
+                        L 11.5 39 C 10.102 39 9 37.898 9 36.5 L 9 11.5 C 9 10.102 10.102 9 11.5 9 L 29.5 9 C 30.898 9 
+                        32 10.102 32 11.5 A 1.5 1.5 0 1 0 35 11.5 C 35 8.48 32.52 6 29.5 6 L 11.5 6 z M 33.484 15.484 
+                        A 1.5 1.5 0 0 0 32.44 18.061 L 36.879 22.5 L 15.5 22.5 A 1.5 1.5 0 1 0 15.5 25.5 L 36.879 25.5 
+                        L 32.44 29.94 A 1.5 1.5 0 1 0 34.561 32.061 L 41.561 25.061 A 1.5 1.5 0 0 0 41.561 22.94 L 34.561 
+                        15.94 A 1.5 1.5 0 0 0 33.484 15.484 z"></path>
+                    </svg>
                     <span>Logout</span>
                 </a>
+            
+                <!-- Form Logout -->
+                <form id="logout-form" action="{{ route('logout.admin') }}" method="GET" style="display: none;">
+                    @csrf
+                </form>
             </li>
         </ul>
     </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-10 md:ml-60 mb-36">
-            @yield('content')
-        </main>
-        </div>
+    <!-- Main Content -->
+    <html class="overflow-x-hidden h-screen">
+        <body class="overflow-x-hidden h-screen">
+            <!-- Main Content -->
+            <main class="flex-1 p-1 md:ml-60 mb-36 flex justify-center items-center">
+                <div class="w-full max-w-5xl">
+                    @yield('content')
+                </div>
+            </main>
+        </body>
+    </html>
 
-      <!-- Modal Popup Konfirmasi Logout  -->
-      <div id="confirmationLogout" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-gray-800 bg-opacity-50 text-sm md:text-xs">
-        <div class="bg-white py-6 px-12 rounded-lg shadow-lg">
-            <p class="text-center text-gray-700">Yakin mau logout?</p>
-            <div class="mt-4 flex justify-center gap-6">
-                <button id="cancelLogout" class="bg-white text-green-500 border border-green-500 py-2 px-4 rounded-xl hover:bg-green-500 hover:text-white">Tidak</button>
-                <button id="confirmLogout" class="bg-white border border-red-500 text-red-500 py-2 px-4 rounded-xl hover:bg-red-500 hover:text-white">Ya</button>
-            </div>
+<!-- Modal Konfirmasi Logout -->
+<div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-gray-800 bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm">
+        <h2 class="text-lg text-center font-semibold mb-4">Konfirmasi Logout</h2>
+        <p class="mb-6">Apakah Anda yakin ingin logout?</p>
+        <div class="flex justify-center space-x-4">
+            <button onclick="closeLogoutModal()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Batal</button>
+            <a href="{{ route('logout.admin') }}" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Logout</a>
         </div>
     </div>
+</div>
+
 
     <!-- JavaScript sidebar-->
     <script>
@@ -493,6 +518,15 @@ function ProfileDropdown(event) {
             arrowIcon.classList.remove('fa-chevron-up');
             arrowIcon.classList.add('fa-chevron-down');
         }
+    }
+
+    //logout 
+    function openLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
     }
 
     </script>

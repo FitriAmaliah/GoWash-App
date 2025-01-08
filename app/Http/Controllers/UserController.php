@@ -34,6 +34,12 @@ class UserController extends Controller
     return view('pages-user.dashboard-user', compact('totalpemesanan', 'pemesananaktif', 'pemesananselesai'));
 }
 
+public function showLandingPage()
+{
+    $ulasan = Ulasan::all(); // Assuming you have a model named Ulasan
+    return view('landingPage', compact('ulasan')); // Pass the variable to the view
+}
+
 public function layanantersedia(Request $request)
 {
     // Ambil semua layanan dengan paginasi 2 data per halaman
@@ -143,12 +149,11 @@ public function indexriwayatpemesanan(Request $request)
     return view('pages-user.riwayat-pemesanan', compact('orders', 'layanans', 'search', 'status'));
 }
 
-
     public function statuspemesanan()
     {
        // Ambil data pemesanan berdasarkan user_id yang sedang login
        $userId = Auth::id(); // Dapatkan user_id dari user yang login
-       $orders = Pemesanan::where('user_id', $userId)->paginate(1); // Paginate 10 per halaman
+       $orders = Pemesanan::where('user_id', $userId)->paginate(5); // Paginate 10 per halaman
 
        return view('pages-user.status-pemesanan', compact('orders'));
     }
@@ -158,7 +163,7 @@ public function indexriwayatpemesanan(Request $request)
             // Ambil pesanan dengan status "Selesai" untuk pengguna yang sedang login
             $orders = Pemesanan::where('user_id', auth()->id())
                             ->where('status', 'Selesai')
-                            ->paginate(1);
+                            ->paginate(2);
             
             return view('pages-user.riwayat-pemesanan', compact('orders'));
         }
@@ -199,7 +204,12 @@ public function tulisulasan()
 {
     // Menampilkan semua ulasan
     $ulasan = Ulasan::all();
-    return view('pages-user.tulis-ulasan', compact('ulasan'));
+    
+    // Menampilkan data order (contoh)
+    $order = Pemesanan::all(); // Sesuaikan jika Anda ingin mengambil data order tertentu
+
+    // Menampilkan halaman dengan variabel ulasan dan order
+    return view('pages-user.tulis-ulasan', compact('ulasan', 'order'));
 }
 
 public function ulasanStore(Request $request)
@@ -468,10 +478,9 @@ public function paymentSuccess(Request $request)
             throw new \Exception('Pemesanan not found');
         }
 
-        // Perbarui status pembayaran dan pemesanan
-        $pemesanan->update([
-            'status_pembayaran' => 'success',
-        ]);
+         // Perbarui status pembayaran
+         $pemesanan->status_pembayaran = 'success';
+         $pemesanan->save();
 
         return response()->json([
             'message' => 'Pembayaran berhasil!',

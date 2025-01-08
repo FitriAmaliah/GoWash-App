@@ -44,7 +44,7 @@
 
     <div class="mb-4">
         <label for="harga" class="block text-gray-700 font-medium mb-2">Harga</label>
-        <input type="number" id="harga" name="harga" value="{{ $layanan->harga }}" placeholder="Masukkan harga layanan" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        <input id="harga" name="harga" value="{{ number_format($layanan->harga, 0, ',', '.') }}" placeholder="Masukkan harga layanan" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
     </div>
 
     <div class="mb-6">

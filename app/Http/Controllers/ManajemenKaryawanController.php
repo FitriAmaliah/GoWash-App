@@ -33,7 +33,7 @@ class ManajemenKaryawanController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed', // Menambahkan konfirmasi password
+            'password' => 'required|string|min:8|', // Menambahkan konfirmasi password
         ]);
 
         // Menyimpan data pengguna baru

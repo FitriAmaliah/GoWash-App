@@ -22,10 +22,10 @@
 
         <!-- Statistik Kartu -->
         <div class="mt-6">
-            <div class="bg-white rounded-lg shadow-lg p-6 mx-auto" style="max-width: 1000px; height: auto;">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow-lg p-6 mx-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Total Pesanan -->
-                    <div class="bg-gradient-to-r from-red-400 via-red-500 to-red-600 p-4 rounded shadow flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-red-400 via-red-500 to-red-600 p-4 rounded shadow flex flex-col sm:flex-row justify-between items-center">
                         <div>
                             <h2 class="text-white font-semibold">Total Pesanan</h2>
                             <p class="text-2xl text-white font-bold">{{ $totalpemesanan }}</p>
@@ -33,17 +33,17 @@
                         <i class="fa-solid fa-car-side fa-5x text-white"></i>
                     </div>
 
-                    <!-- Total Pendapatan -->
-                    <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-4 rounded shadow flex justify-between items-center">
+                                    <!-- Total Pendapatan -->
+                    <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-4 rounded shadow flex flex-col sm:flex-row justify-between items-center">
                         <div>
                             <h2 class="text-white font-semibold">Total Pendapatan</h2>
-                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalpendapatan, 3, ',', '.') }}</p>
+                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
                         </div>
                         <i class="fa-solid fa-money-bill-wave fa-5x text-white"></i>
                     </div>
 
                     <!-- Jumlah Pelanggan -->
-                    <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 p-4 rounded shadow flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 p-4 rounded shadow flex flex-col sm:flex-row justify-between items-center">
                         <div>
                             <h2 class="text-white font-semibold">Jumlah Pelanggan</h2>
                             <p class="text-2xl text-white font-bold">{{ $jumlahpelanggan }}</p>
@@ -54,12 +54,14 @@
             </div>
         </div>
 
-        <!-- Diagram Statistik -->
-        <div class="mt-6">
-            <div class="bg-white rounded-lg shadow-lg p-6 mx-auto" 
-                 style="max-width: 1200px; height: auto;">
-                <h3 class="text-lg font-semibold mb-4 text-center">Statistik Diagram</h3>
-                <canvas id="statisticsChart" width="800" height="400"></canvas>
+<!-- Diagram Statistik -->
+<div class="mt-6">
+    <div class="overflow-x-auto">
+        <div class="min-w-full w-64">
+            <div class="bg-white rounded-lg shadow-lg p-6 mx-auto">
+                <h3 class="text-lg font-semibold mb-4 text-center">Statistik Diagram Per Bulan</h3>
+                <!-- Chart Responsif -->
+                <canvas id="statisticsChart" class="w-full" height="400"></canvas>
             </div>
         </div>
     </div>
@@ -67,29 +69,40 @@
 
 <!-- Script Chart.js -->
 <script>
-    // Ambil data dari server-side Blade
+    // Data Manual untuk Diagram
     const data = {
-        labels: ['Pesanan', 'Pendapatan', 'Pelanggan'],
-        datasets: [{
-            label: 'Statistik',
-            data: [{{ $totalpemesanan }}, {{ $totalpendapatan }}, {{ $jumlahpelanggan }}],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)'
-            ],
-            borderWidth: 1
-        }]
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        datasets: [
+            {
+                label: 'Pesanan',
+                data: [120, 150, 180, 200, 230, 210, 190, 220, 240, 260, 250, 270], // Data Pesanan
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.3,
+                fill: true
+            },
+            {
+                label: 'Pendapatan',
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3600], // Hanya di bulan Desember
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                tension: 0.3,
+                fill: true
+            },
+            {
+                label: 'Pelanggan',
+                data: [30, 40, 50, 55, 60, 58, 54, 65, 70, 75, 72, 80], // Data Pelanggan
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.3,
+                fill: true
+            }
+        ]
     };
 
     // Konfigurasi Chart
     const config = {
-        type: 'bar', // Jenis diagram, bisa diubah ke 'pie', 'line', dll.
+        type: 'line', // Menggunakan diagram garis
         data: data,
         options: {
             responsive: true,
@@ -113,5 +126,6 @@
         config
     );
 </script>
+
 
 @endsection

@@ -33,11 +33,11 @@
         <p class="text-center text-gray-500 col-span-2">Belum ada ulasan.</p>
     @endforelse
 </div>
+</div>
 
 
-        <div class="flex justify-center mt-6">
-            <div class="pagination">
-                {{ $ulasan->links('pagination::tailwind') }}
+        <div class="pagination">
+            {{ $ulasan->links('pagination::tailwind') }}
             </div>
         </div>
     </div>

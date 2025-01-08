@@ -55,12 +55,21 @@ class AuthController extends Controller
 
         // Coba autentikasi pengguna
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Ambil data pengguna yang berhasil login
+            $user = Auth::user(); // Menyimpan pengguna yang login ke dalam variabel $user
+
             // Redirect berdasarkan role pengguna
-            if (Auth::user()->role === 'admin') {
+            if ($user->role === 'admin') {
+                Auth::guard('admin')->login($user); // Login sebagai admin
+                $request->session()->regenerate(); // Regenerate session
                 return redirect()->route('dashboard.admin');
-            } elseif (Auth::user()->role === 'user') {
+            } elseif ($user->role === 'user') { // Periksa role 'user'
+                Auth::guard('user')->login($user); // Login sebagai admin
+                $request->session()->regenerate(); // Regenerate session
                 return redirect()->route('dashboard.user'); 
-            } elseif (Auth::user()->role === 'karyawan') {
+            } elseif ($user->role === 'karyawan') { // Periksa role 'karyawan'
+                Auth::guard('karyawan')->login($user); // Login sebagai admin
+                $request->session()->regenerate(); // Regenerate session
                 return redirect()->route('dashboard.karyawan'); 
             }
         }
@@ -71,10 +80,30 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    // Menangani logout
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
-        return redirect()->route('login');
+        Auth::guard('user')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('login')->with('success', 'Anda telah berhasil logout.');
+    }
+
+    public function logoutAdmin(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('login')->with('success', 'Anda telah berhasil logout.');
+    }
+
+    public function logoutKaryawan(Request $request)
+    {
+        Auth::guard('karyawan')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('login')->with('success', 'Anda telah berhasil logout.');
     }
 }

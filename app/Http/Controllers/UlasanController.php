@@ -13,6 +13,12 @@ class UlasanController extends Controller
         $ulasan = Ulasan::paginate(2);
         return view('pages-user.ulasan', compact('ulasan'));
     }
+    public function ulasanLandingPage()
+    {
+        // Menampilkan ulasan dengan paginasi 10 ulasan per halaman
+        $ulasan = Ulasan::paginate(6);
+        return view('landing-page', compact('ulasan'));
+    }
 
     public function store(Request $request)
     {

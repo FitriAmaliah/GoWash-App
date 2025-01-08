@@ -87,5 +87,4 @@ class PemesananController extends Controller
             'status_pesanan' => $order->status_pembayaran
         ], 200);
     }
-    
 }

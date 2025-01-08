@@ -5,41 +5,53 @@
 @section('content')
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 <!-- Content Area -->
 <div class="flex-1 p-5">
     <!-- White Container -->
     <div class="bg-white shadow-md rounded-lg p-5">
 
-        <!-- Header -->
-        <div class="mb-6">
-            <h5 class="text-2xl font-semibold text-gray-700">Riwayat Transaksi</h5>
+        <div class="mb-4">
         </div>
 
-            <!-- Search Input -->
-            <div class="flex justify-between items-center p-4">
-                <div class="flex justify-center mb-4">
-                    <div class="relative w-full max-w-xs">
-                        <form action="{{ route('pages-admin.data-transaksi') }}" method="GET">
-                            <input 
-                                id="search-input" 
-                                type="text" 
-                                name="search"
-                                value="{{ request('search') }}" 
-                                placeholder="Cari nama pelanggan..." 
-                                class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
-                            />
-                            <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p> <!-- Pesan tidak ditemukan -->                    
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                            </span>
-                        </form>
-                    </div>
-                </div>  
+        <div class="container mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h5 class="text-2xl font-semibold text-gray-700 mb-4">Riwayat Transaksi</h5>
             </div>
+<!-- Add Service Button and Search (Mobile Only) -->
+<div class="p-4">
+    <div class="flex flex-col sm:flex-row sm:space-x-4 sm:space-y-0">
+        <!-- Search Bar (on Mobile and Desktop) -->
+        <div class="relative w-full sm:max-w-xs mb-4 sm:mb-0">
+            <form action="{{ route('pages-admin.data-transaksi') }}" method="GET">
+                <input 
+                    id="search-input" 
+                    type="text" 
+                    name="search"
+                    value="{{ request('search') }}" 
+                    placeholder="Cari nama pelanggan..." 
+                    class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                />
+                <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p>                    
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </span>
+            </form>
+        </div>
+
+        <!-- Add Service Button (Aligned to the Right on Desktop) -->
+        <a href="tambah-transaksi" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center justify-center w-full sm:w-auto sm:ml-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Tambah Transaksi
+        </a>    
+    </div>
+</div>
 
         <!-- Data Table -->
         <div class="overflow-x-auto">
+            <div class="min-w-full w-64">
             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
                 <thead class="bg-indigo-500 text-white">
                     <tr>
@@ -92,7 +104,8 @@
                     @endforelse    
                 </tbody>
             </table>
-
+        </div>
+    </div>
             <!-- Pagination -->
             <div class="mt-4">
                 {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}

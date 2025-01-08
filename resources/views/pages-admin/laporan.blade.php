@@ -38,23 +38,22 @@
                 
                 <!-- Filter Tanggal dan Button Filter -->
                 <div class="flex items-center space-x-4 w-full sm:w-auto">
-                    <form method="GET" action="{{ route('laporan') }}" class="flex items-center space-x-4">
                         <!-- Input Tanggal -->
-                        <div>
-                            <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Pemesanan</label>
-                            <input 
-                                type="date" 
-                                id="start_date" 
-                                name="start_date"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                value="{{ request('start_date') }}">  <!-- Menjaga nilai input tetap di form -->
-                        </div>          
-                    
+                        <form method="GET" action="{{ route('laporan') }}" class="flex items-center space-x-4">
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Pemesanan</label>
+                                <input 
+                                    type="date" 
+                                    id="start_date" 
+                                    name="start_date"
+                                    value="{{ request('start_date') }}"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>       
                         <!-- Button Filter -->
                         <button 
                             type="submit" 
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
-                            Filter Tanggal
+                            Filter
                         </button>
                     </form>                    
                 </div>
@@ -62,6 +61,7 @@
 
             <!-- Data Table -->
             <div class="overflow-x-auto mb-8">
+                <div class="min-w-full w-64">
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-indigo-500 text-white">
                         <tr>
@@ -99,14 +99,15 @@
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- Tombol Cetak PDF -->
-            <div class="flex justify-end mb-4">
-                <a href="{{ route('laporan.cetak-pdf') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center">
-                    <i class="fa-solid fa-file-pdf mr-2"></i>
-                    Cetak PDF
-                </a>
-            </div>
+        <div class="flex justify-end mb-4">
+            <a href="{{ route('laporan.cetak-pdf', ['start_date' => request('start_date')]) }}" 
+               class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center">
+                <i class="fa-solid fa-file-pdf mr-2"></i>
+                Cetak PDF
+            </a>
+        </div>        
 
             <!-- Pagination -->
             <div class="mt-4">

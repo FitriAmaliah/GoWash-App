@@ -11,7 +11,7 @@ class ManajemenPenggunaController extends Controller
 public function index()
 {
     // Mengambil data pengguna dengan role 'user' dan paginasi
-    $users = User::where('role', 'user')->paginate(5); // Menampilkan 10 pengguna per halaman
+    $users = User::where('role', 'user')->paginate(10); // Menampilkan 10 pengguna per halaman
     return view('pages-admin.manajemen-pengguna', compact('users')); // Menampilkan tampilan dengan data pengguna
 }
 

@@ -19,35 +19,40 @@
                 <h5 class="text-2xl font-semibold text-gray-700 mb-4">Manajemen Pengguna</h5>
             </div>
 
-            <!-- Search Input -->
-            <div class="flex justify-between items-center p-4">
-                <div class="flex justify-center mb-4">
-                    <div class="relative w-full max-w-xs">
-                        <form action="{{ route('pages-admin.manajemen-pengguna') }}" method="GET">
-                            <input 
-                                id="search-input" 
-                                type="text" 
-                                name="search"
-                                value="{{ request('search') }}" 
-                                placeholder="Cari nama pengguna..." 
-                                class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
-                            />
-                            <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p>                    
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                            </span>
-                        </form>
-                    </div>
-                </div>      
-                <a href="{{ route('tambah-pengguna') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Tambah Pengguna
-                </a>    
-            </div>
+<!-- Add Service Button and Search (Mobile Only) -->
+<div class="p-4">
+    <div class="flex flex-col sm:flex-row sm:space-x-4 sm:space-y-0">
+        <!-- Search Bar (on Mobile and Desktop) -->
+        <div class="relative w-full sm:max-w-xs mb-4 sm:mb-0">
+            <form action="{{ route('pages-admin.manajemen-pengguna') }}" method="GET">
+                <input 
+                    id="search-input" 
+                    type="text" 
+                    name="search"
+                    value="{{ request('search') }}" 
+                    placeholder="Cari nama pengguna..." 
+                    class="block w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" 
+                />
+                <p id="no-data-message" class="text-red-500 text-sm mt-2 hidden">Data tidak ditemukan</p>                    
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </span>
+            </form>
+        </div>
+
+        <!-- Add Service Button (Aligned to the Right on Desktop) -->
+        <a href="{{ route('tambah-pengguna') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center justify-center w-full sm:w-auto sm:ml-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Tambah Pengguna
+        </a>    
+    </div>
+</div>
 
             <!-- Table -->
+            <div class="overflow-x-auto">
+            <div class="min-w-full w-64">
             <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden">
                 <thead>
                     <tr>
@@ -94,6 +99,8 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
 
            <!-- Link Pagination -->
         <div class="mt-4">
@@ -102,18 +109,18 @@
 
 <!-- Modal untuk Detail Pengguna -->
 @foreach ($users as $user)
-<div id="detail-modal-{{ $user->id }}" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
-        <h3 class="text-lg font-semibold mb-4">Detail Pengguna</h3>
-        <p><strong>Nama Pengguna:</strong> {{ $user->name }}</p>
-        <p><strong>Hak Akses:</strong> {{ $user->role }}</p>
-        <button 
-            onclick="closeModal({{ $user->id }})" 
-            class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-            Tutup
-        </button>
+    <div id="detail-modal-{{ $user->id }}" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-3/4 md:w-1/2 lg:w-1/3 max-w-lg mx-4 sm:mx-8 md:mx-16">
+            <h3 class="text-lg font-semibold mb-4">Detail Pengguna</h3>
+            <p><strong>Nama Pengguna:</strong> {{ $user->name }}</p>
+            <p><strong>Hak Akses:</strong> {{ $user->role }}</p>
+            <button 
+                onclick="closeModal({{ $user->id }})" 
+                class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                Tutup
+            </button>
+        </div>
     </div>
-</div>
 @endforeach
 
 <script>

@@ -23,7 +23,13 @@
         
         <!-- Profile Details -->
         <div class="mt-6 space-y-4">
-            @foreach (['Nama' => Auth::user()->name, 'Email' => Auth::user()->email, 'Nomor Telepon' => Auth::user()->phone ?? 'Belum Ditambahkan', 'Alamat' => Auth::user()->address ?? 'Belum Ditambahkan', 'Tanggal Bergabung' => Auth::user()->created_at->format('d M Y'), 'Status' => Auth::user()->is_active ? 'Aktif' : 'Tidak Aktif'] as $title => $value)
+            @foreach ([
+                'Nama' => Auth::user()->name,
+                'Email' => Auth::user()->email,
+                'Nomor Telepon' => Auth::user()->phone ?? 'Belum Ditambahkan',
+                'Alamat' => Auth::user()->address ?? 'Belum Ditambahkan',
+                'Tanggal Bergabung' => Auth::user()->created_at->format('d M Y')
+            ] as $title => $value)            
                 <div class="flex items-center bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg shadow-md">
                     <div class="flex-shrink-0 bg-indigo-500 text-white p-2 rounded-lg">
                         <i class="fas fa-info-circle"></i> <!-- Update icon accordingly -->
@@ -48,19 +54,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Modal -->
-<div id="imageModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden z-20">
-    <div class="relative">
-        <img id="modalImage" src="" alt="Foto Profil" class="max-w-[20rem] max-h-[20rem] rounded-lg shadow-lg">
-        <button 
-            class="absolute top-2 right-2 bg-white text-black rounded-full p-2 shadow hover:bg-gray-200"
-            onclick="closeModal()"
-        >
-            &times;
-        </button>
-    </div>
-</div>
         <!-- Edit Profile Button -->
         <div class="text-center mt-8">
             <a href="edit-profil" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-lg shadow-lg hover:from-blue-600 hover:to-indigo-600 transition duration-300">

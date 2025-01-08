@@ -54,7 +54,9 @@
                     <!-- Tombol -->
                     <div class="flex justify-center space-x-4 mb-6">
                         <button type="button" onclick="openModal()" class="bg-blue-500 text-white font-semibold px-6 py-2 rounded-md shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">Pesan Sekarang</button>
-                        <button type="button" class="bg-red-500 text-white font-semibold px-6 py-2 rounded-md shadow-md hover:bg-red-600 focus:ring-2 focus:ring-red-400 focus:ring-opacity-50">Batal</button>
+                        <button type="button" onclick="window.location.href='{{ route('layanan.tersedia') }}'" class="bg-red-500 text-white font-semibold px-6 py-2 rounded-md shadow-md hover:bg-red-600 focus:ring-2 focus:ring-red-400 focus:ring-opacity-50">
+                            Batal
+                        </button>                        
                     </div>
                 </form>
             </div>
@@ -120,7 +122,7 @@
 
         window.openModal = openModal;
         window.closeModal = closeModal;
-
+ 
         window.selectPayment = function (method) {
             alert(`Anda memilih metode pembayaran: ${method}`);
 
@@ -142,8 +144,19 @@
                 if (method === 'digital' && data.snapToken) {
                     snap.pay(data.snapToken, {
                         onSuccess: function (result) {
-                            alert('Pembayaran berhasil!');
-                            location.reload();
+                            fetch("{{ route('payment.success') }}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({
+                                    "order_id": data.pemesanan.id,
+                                })
+                            }).then(() => {
+                                alert('Pembayaran berhasil!');
+                                location.reload();
+                            })
                         },
                         onPending: function () {
                             alert('Menunggu pembayaran...');
@@ -162,6 +175,7 @@
             });
         };
     });
+
 </script>
 
 @endsection

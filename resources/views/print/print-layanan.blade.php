@@ -91,9 +91,13 @@
     <div id="receipt">
         <div class="text-center font-bold text-lg mb-2">Struk Layanan Cuci Kendaraan</div>
         <div class="text-center text-gray-500">GoWash</div>
-        <div class="text-center text-gray-700 mb-4">Tanggal: {{ now()->format('d M Y H:i:s') }}</div>
+        <div class="text-center text-gray-700">
+            <span id="realTimeClock" data-server-time="{{ now()->format('H:i:s') }}"></span>
+                        Waktu: {{ now()->format('H:i:s') }}
+                    </span>
+                </div>         
+        <div class="text-center text-gray-700">GoWash</div>
         <hr>
-        
             <div class="mb-4">
                 <div class="flex justify-between">
                     <span class="text-gray-700">Nama Pelanggan:</span>
@@ -122,7 +126,6 @@
                     </span>
                 </div>
             </div>
-
             <hr>
 
             <div class="border-t pt-2">
@@ -134,5 +137,36 @@
                 <div class="text-center text-sm text-gray-500 mt-4">Terima Kasih atas Kunjungan Anda!</div>
             </div>
     </div>
+
+     <!-- Script untuk Update Waktu -->
+ <script>
+    function updateClock() {
+    const clockElement = document.getElementById('realTimeClock');
+    let serverTime = clockElement.getAttribute('data-server-time') || '00:00:00';
+    let [hours, minutes, seconds] = serverTime.split(':').map(Number);
+
+    const now = new Date();
+    now.setHours(hours, minutes, seconds);
+
+    // Tambahkan 1 detik setiap pembaruan
+    now.setSeconds(now.getSeconds() + 1);
+
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const timeString = `${hh}:${mm}:${ss}`;
+
+    clockElement.textContent = 'Waktu: ' + timeString;
+
+    // Simpan waktu terbaru
+    serverTime = timeString;
+    clockElement.setAttribute('data-server-time', serverTime);
+}
+
+// Perbarui waktu setiap detik
+setInterval(updateClock, 1000);
+updateClock();
+
+</script>
 </body>
 </html>

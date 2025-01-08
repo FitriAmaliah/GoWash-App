@@ -16,7 +16,7 @@
             <div class="flex-1 p-5">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-100 shadow-xl rounded-xl p-6">
                     <div class="container mx-auto">
-                        <h5 class="text-3xl font-semibold text-gray-800 mb-4">Tulis Ulasan Anda</h5>
+                        <h5 class="text-3xl font-semibold text-gray-800 mb-4">Tambah Ulasan</h5>
                         @if ($errors->any())
                             <div class="bg-red-100 text-red-600 p-4 rounded-lg mb-4">
                                 <ul class="list-disc pl-5">
@@ -28,10 +28,15 @@
                         @endif
                         <form action="{{ route('ulasan.index') }}" method="POST" class="bg-white shadow-xl rounded-2xl p-6 space-y-4">
                             @csrf
-                            <!-- Nama Layanan -->
+                            <!-- Nama Pengguna-->
                             <div>
                                 <label for="nama_pengguna" class="text-lg font-semibold text-gray-700">Nama Pengguna</label>
-                                <input type="text" id="nama_pengguna" name="nama_pengguna" placeholder="Masukkan nama layanan" class="w-full mt-2 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <input type="text" 
+                                    id="nama_pengguna" 
+                                    name="nama_pengguna" 
+                                    value="{{ Auth::user()->name }}" 
+                                    class="w-full mt-2 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                                    readonly>
                             </div>
                             <!-- Rating -->
                             <div class="mt-4">

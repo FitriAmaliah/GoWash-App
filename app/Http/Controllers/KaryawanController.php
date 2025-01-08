@@ -28,14 +28,14 @@ class KaryawanController extends Controller
     public function tugasharian()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(3); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-karyawan.tugas-harian', compact('orders'));
     }
 
     public function updatestatus()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $orders = Pemesanan::paginate(3); // Menampilkan 4 komentar per halaman
+        $orders = Pemesanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-karyawan.update-status', compact('orders'));
     }
 
@@ -176,7 +176,7 @@ public function indexstatuspengerjaan(Request $request)
     public function riwayatpengerjaan()
     {
         // Ambil pesanan dengan status "Selesai"
-        $orders = Pemesanan::where('status', 'Selesai')->paginate(1);
+        $orders = Pemesanan::where('status', 'Selesai')->paginate(5);
         
         return view('pages-karyawan.riwayat-pengerjaan', compact('orders'));
     }

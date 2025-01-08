@@ -11,7 +11,7 @@ class LayananController extends Controller
     public function index()
     {
         // Menampilkan data layanan dengan 10 item per halaman
-        $layanans = Layanan::paginate(2); 
+        $layanans = Layanan::paginate(3); 
         return view('pages-admin.data-layanan', compact('layanans'));
     }
 

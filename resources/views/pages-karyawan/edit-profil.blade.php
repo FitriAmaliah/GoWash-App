@@ -15,7 +15,7 @@
             <div class="mb-4">
                 <label for="profile-picture" class="block text-gray-600 font-medium">Foto Profil</label>
                 <div class="mt-2 flex items-center">
-                    <img id="profile-pic" src="/assets/logo.jpg" alt="Profile Picture" class="w-16 h-16 rounded-full mr-4">               
+                    <img id="profile-pic" src="/assets/profile.png" alt="Profile Picture" class="w-16 h-16 rounded-full mr-4">               
                     <input type="file" id="profile-picture" name="profile_picture" class="hidden" accept="image/*" onchange="previewImage(event)">
                     <button type="button" class="bg-indigo-500 text-white px-4 py-2 rounded" onclick="document.getElementById('profile-picture').click()">Ganti Foto</button>
                 </div>
@@ -46,13 +46,13 @@
             </div>
 
             <!-- Status -->
-            <div class="mb-4">
+            <!--<div class="mb-4">
                 <label for="status" class="block text-gray-600 font-medium">Status</label>
                 <select id="status" name="is_active" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="1" {{ Auth::user()->is_active ? 'selected' : '' }}>Aktif</option>
                     <option value="0" {{ !Auth::user()->is_active ? 'selected' : '' }}>Tidak Aktif</option>
                 </select>
-            </div>
+            </div> -->
 
             <!-- Tombol Simpan -->
             <div class="flex justify-center">

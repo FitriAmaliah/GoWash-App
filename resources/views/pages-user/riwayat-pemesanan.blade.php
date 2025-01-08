@@ -38,6 +38,7 @@
 
             <div class="max-w-4xl mx-auto mt-10">
                 <div class="overflow-x-auto">
+                    <div class="min-w-full w-64">
                     <table class="w-full bg-white rounded-lg shadow-md">
                         <thead class="bg-gray-200">
                             <tr>
@@ -69,42 +70,40 @@
                                             class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
                                             <i class="fa-solid fa-eye mr-2"></i>Lihat Detail
                                         </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Modal untuk Detail Pesanan -->
-                                <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                                    <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
-                                        <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
-                                        <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
-                                        <p><strong>Tanggal Pesan:</strong> {{ $order->tanggal }}</p>
-                                        <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
-                                        <p><strong>Status Pemesanan:</strong> {{ $order->status }}</p>
-                                        <button 
-                                            onclick="closeModal({{ $order->id }})" 
-                                            class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition">
-                                            Tutup
-                                        </button>
                                     </div>
-                                </div>
+                                </td>                                    
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6" class="text-center py-4 px-4 text-gray-500">Tidak ada data pemesanan.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-
-                    <!-- Link Pagination -->
-                    <div class="mt-4">
-                        {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
-                    </div>
-                </div>
+                            <tr>
+                            <td colspan="7" class="text-center py-4 px-4 text-gray-500">Tidak ada riwayat pemesanan.</td>
+                        </tr>
+                    @endforelse
+                    </tbody>              
+                </table>
             </div>
+        </div>              
+        <!-- Link Pagination -->
+        <div class="mt-4">
+            {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
         </div>
-    </div>
-</div>
-
+                             <!-- Modal untuk Detail Pesanan -->
+                             @foreach ($orders as $order)
+                             <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center p-4">
+                                <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg md:w-1/3">
+                                    <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
+                                    <!--<p><strong>No:</strong>{{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</p>-->
+                                    <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
+                                    <p><strong>Tanggal Pesan:</strong> {{ $order->tanggal }}</p>
+                                    <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
+                                    <p><strong>Status Pemesanan:</strong> {{ $order->status }}</p>
+                                    <button 
+                                        onclick="closeModal({{ $order->id }})" 
+                                        class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+        @endforeach
 <script>
     function searchTable() {
         const input = document.getElementById("search-input").value.toLowerCase();

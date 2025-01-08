@@ -1,6 +1,6 @@
 @extends('layouts.layout-user')
 
-@section('title', 'Layanan Tersedia - User')
+@section('title', 'Pesan Layanan')
 
 @section('content')
 
@@ -47,7 +47,7 @@
                             <div class="p-6">
                                 <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $layanan->nama_layanan }}</h3>
                                 <p class="text-gray-600 mb-4">{{ $layanan->deskripsi }}</p>
-                                <p class="font-bold text-lg mb-4">Harga: Rp {{ number_format($layanan->harga, 3, ',', '.') }}</p>
+                                <p class="font-bold text-lg mb-4">Harga: Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
                                 <div class="flex space-x-4 justify-center">
                                     <a href="{{ route('form.pemesanan', $layanan->id) }}" 
                                        class="bg-gradient-to-r from-green-400 to-green-600 text-white py-2 px-4 rounded-lg hover:from-green-500 hover:to-green-700 transition-all text-center">
