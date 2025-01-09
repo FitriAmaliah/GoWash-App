@@ -33,12 +33,12 @@
                         <i class="fa-solid fa-car-side fa-5x text-white"></i>
                     </div>
 
-                                    <!-- Total Pendapatan -->
+                    <!-- Total Pendapatan -->
                     <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-4 rounded shadow flex flex-col sm:flex-row justify-between items-center">
                         <div>
                             <h2 class="text-white font-semibold">Total Pendapatan</h2>
-                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
-                        </div>
+                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalpendapatan, 3, ',', '.') }}</p>
+                        </div> 
                         <i class="fa-solid fa-money-bill-wave fa-5x text-white"></i>
                     </div>
 

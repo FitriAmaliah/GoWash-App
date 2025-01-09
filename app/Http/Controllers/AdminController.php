@@ -161,8 +161,7 @@ class AdminController extends Controller
         public function storetransaksibyadmin(Request $request)
     {
         try {
-            $user = User::findOrFail($request->user_id);
-            dd($user);
+            $user = Auth::user();
             if (!$user) {
                 throw new \Exception('User not authenticated');
             }
