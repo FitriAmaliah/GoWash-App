@@ -34,14 +34,16 @@
             </div>     
 
             <!-- Table -->
-            <div class="max-w-4xl mx-auto mt-10">
+            <div class="overflow-x-auto scrollbar-hide">
                 <div class="overflow-x-auto">
-                    <div class="min-w-full w-64">
+                    <div class="min-w-full w-64 mt-4">
                     <table class="w-full bg-white rounded-lg shadow-md">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="w-1/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">No</th>
                                 <th class="w-2/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Jenis Layanan</th>
+                                <th class="w-2/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Jenis Kendaraan</th>
+                                <th class="w-2/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Plat Nomor</th>
                                 <th class="w-2/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Tanggal Pesan</th>
                                 <th class="w-2/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Metode Pembayaran</th>
                                 <th class="w-1/12 text-center py-3 px-4 uppercase bg-indigo-500 font-semibold text-sm text-white">Status Pemesanan</th>
@@ -54,6 +56,8 @@
                                 <tr id="order-{{ $order->id }}" class="border-t">
                                     <td class="text-center py-4 px-4">{{ $index + 1 + ($orders->currentPage() - 1) * $orders->perPage() }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->layanan->nama_layanan }}</td>
+                                    <td class="text-center py-4 px-4">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                                    <td class="text-center py-4 px-4">{{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
                                     <td class="text-center py-4 px-4">{{ $order->tanggal }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->metode_pembayaran }}</td>
                                     <td class="text-center py-4 px-4">{{ $order->status_pembayaran }}</td>
@@ -74,7 +78,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                    <td colspan="7" class="text-center py-4 px-4 text-gray-500">Tidak ada data pemesanan.</td>
+                                    <td colspan="8" class="text-center py-4 px-4 text-gray-500">Tidak ada data pemesanan.</td>
                                 </tr>
                             @endforelse
                             </tbody>              
@@ -92,9 +96,12 @@
                     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg md:w-1/3">
                         <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
                         <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan }}</p>
+                        <p><strong>Jenis Kendaraan:</strong>{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</p>
+                        <p><strong>Plat Nomor:</strong> {{ $order->plat_nomor ?? 'Tidak Ada'}}</p>
                         <p><strong>Tanggal Pesan:</strong> {{ $order->tanggal }}</p>
                         <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
-                        <p><strong>Status Pemesanan:</strong> {{ $order->status }}</p>
+                        <p><strong>Status Pemesanan:</strong>{{ $order->status_pembayaran }}</p>
+                        <p><strong>Status Pengerjaan:</strong>{{ $order->status }}</p>
                         <button 
                             onclick="closeModal({{ $order->id }})" 
                             class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition">
@@ -135,5 +142,17 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+
+<style>
+    /* Utility Class to Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
+
+.scrollbar-hide {
+-ms-overflow-style: none; /* IE and Edge */
+scrollbar-width: none; /* Firefox */
+}
+</style>
 
 @endsection

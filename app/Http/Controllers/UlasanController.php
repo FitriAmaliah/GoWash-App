@@ -10,7 +10,7 @@ class UlasanController extends Controller
     public function index()
     {
         // Menampilkan ulasan dengan paginasi 10 ulasan per halaman
-        $ulasan = Ulasan::paginate(2);
+        $ulasan = Ulasan::paginate(4);
         return view('pages-user.ulasan', compact('ulasan'));
     }
     public function ulasanLandingPage()

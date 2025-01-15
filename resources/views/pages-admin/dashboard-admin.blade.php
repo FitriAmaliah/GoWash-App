@@ -37,7 +37,7 @@
                     <div class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 p-4 rounded shadow flex flex-col sm:flex-row justify-between items-center">
                         <div>
                             <h2 class="text-white font-semibold">Total Pendapatan</h2>
-                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalpendapatan, 3, ',', '.') }}</p>
+                            <p class="text-2xl text-white font-bold">Rp {{ number_format($totalpendapatan, 0, ',', '.') }}</p>
                         </div> 
                         <i class="fa-solid fa-money-bill-wave fa-5x text-white"></i>
                     </div>
@@ -53,13 +53,26 @@
                 </div>
             </div>
         </div>
-
+        
 <!-- Diagram Statistik -->
 <div class="mt-6">
     <div class="overflow-x-auto">
         <div class="min-w-full w-64">
             <div class="bg-white rounded-lg shadow-lg p-6 mx-auto">
-                <h3 class="text-lg font-semibold mb-4 text-center">Statistik Diagram Per Bulan</h3>
+                <!-- Bagian Judul dan Filter -->
+                <div class="flex justify-between items-center mb-6">
+                    <!-- Judul di Tengah -->
+                    <h3 class="text-lg font-semibold text-center flex-grow">Pendapatan per Bulan</h3>
+                    <!-- Filter Tahun di Kanan -->
+                    <div class="flex items-center ml-4">
+                        <label for="yearFilter" class="mr-2 font-semibold">Pilih Tahun:</label>
+                        <select id="yearFilter" class="p-2 border rounded">
+                            <option value="2025">2025</option>
+                            <option value="2024" selected>2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                </div>
                 <!-- Chart Responsif -->
                 <canvas id="statisticsChart" class="w-full" height="400"></canvas>
             </div>
@@ -69,55 +82,55 @@
 
 <!-- Script Chart.js -->
 <script>
-    // Data Manual untuk Diagram
+    // Data Pendapatan Berdasarkan Tahun
+    const statisticsData = {
+        2025: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4000], // Gantilah dengan data pendapatan yang sesuai
+        2024: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3600], // Gantilah dengan data pendapatan yang sesuai
+        2023: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3000], // Gantilah dengan data pendapatan yang sesuai
+    };
+
+    // Fungsi untuk Memperbarui Data
+    function updateChart(year) {
+        statisticsChart.data.datasets[0].data = statisticsData[year];
+        statisticsChart.update();
+    }
+
+    // Data Awal untuk Diagram
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
-                label: 'Pesanan',
-                data: [120, 150, 180, 200, 230, 210, 190, 220, 240, 260, 250, 270], // Data Pesanan
-                borderColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                tension: 0.3,
-                fill: true
+                label: 'Pendapatan (Rp)',
+                data: statisticsData[2024], // Default tahun 2024
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 1,
             },
-            {
-                label: 'Pendapatan',
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3600], // Hanya di bulan Desember
-                borderColor: 'rgba(255, 206, 86, 1)',
-                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                tension: 0.3,
-                fill: true
-            },
-            {
-                label: 'Pelanggan',
-                data: [30, 40, 50, 55, 60, 58, 54, 65, 70, 75, 72, 80], // Data Pelanggan
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                tension: 0.3,
-                fill: true
-            }
-        ]
+        ],
     };
 
-    // Konfigurasi Chart
+    // Konfigurasi Chart untuk Diagram Batang
     const config = {
-        type: 'line', // Menggunakan diagram garis
+        type: 'bar', // Mengubah tipe menjadi 'bar' untuk diagram batang
         data: data,
         options: {
             responsive: true,
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top'
-                }
+                    position: 'top',
+                },
             },
             scales: {
                 y: {
-                    beginAtZero: true
-                }
-            }
-        }
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Pendapatan (Rp)',
+                    },
+                },
+            },
+        },
     };
 
     // Render Chart
@@ -125,7 +138,14 @@
         document.getElementById('statisticsChart'),
         config
     );
+
+    // Event Listener untuk Filter Tahun
+    document.getElementById('yearFilter').addEventListener('change', (event) => {
+        const selectedYear = event.target.value;
+        updateChart(selectedYear);
+    });
 </script>
+
 
 
 @endsection

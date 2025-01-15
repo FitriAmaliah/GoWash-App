@@ -41,28 +41,34 @@
                 </div>      
             </div>    
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto scrollbar-hide">
             <div class="min-w-full w-64">
             <table class="w-full bg-white rounded-lg shadow-md">
                 <thead class="bg-indigo-500 text-white">
                     <tr>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">No</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Nama Pelanggan</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Jenis Layanan</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Tanggal Pesan</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Metode Pembayaran</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Update Status</th>
-                        <th class="py-3 px-4 text-center text-sm font-semibold">Aksi</th>
+                        <th class="w-1/12 text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
+                        <th class="w-2/12 text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member</th>
+                        <th class="w-2/12 text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Kendaraan</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Plat Nomor</th>
+                        <th class="w-2/12 text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pesan</th>
+                        <th class="w-2/12 text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
+                        <th class="w-1/12 text-center py-3 px-4 uppercase font-semibold text-sm">Status Pengerjaan</th>
+                        <th class="w-2/12 text-center py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
                     @forelse($orders->where('status', '!=', 'Selesai') as $index => $order)
                         <tr class="border-t">
-                            <td class="text-center py-4 px-4">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-                            <td class="text-center py-4 px-4">{{ $order->user->name ?? 'Tidak diketahui' }}</td>
-                            <td class="text-center py-4 px-4">{{ $order->layanan->nama_layanan }}</td>
-                            <td class="text-center py-4 px-4">{{ $order->tanggal }}</td>
-                            <td class="text-center py-4 px-4">{{ $order->metode_pembayaran }}</td>
+                            <td class="py-3 px-4">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td> <!-- Nomor urut berlanjut -->
+                            <td class="py-3 px-4">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                            <td class="py-3 px-4 text-center">{{ $order->user->id_member  ?? 'Tidak Ada' }}</td>
+                            <td class="py-3 px-4">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                            <td class="py-3 px-4 text-center">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                            <td class="py-3 px-4 text-center">{{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
+                            <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
+                            <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
                             <td class="text-center py-3 px-3">
                                 <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-yellow-500 rounded-full {{ $order->status === 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }}">
                                     {{ $order->status }}
@@ -95,7 +101,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-gray-500">Tidak ada data tersedia</td>
+                            <td colspan="10" class="text-center py-4 text-gray-500">Tidak ada data tersedia</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -133,5 +139,18 @@
         });
     }
 </script>
+
+<style>
+    /* Utility Class to Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
+
+.scrollbar-hide {
+-ms-overflow-style: none; /* IE and Edge */
+scrollbar-width: none; /* Firefox */
+}
+</style>
+
 
 @endsection

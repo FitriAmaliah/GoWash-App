@@ -60,16 +60,18 @@
             </div>
 
             <!-- Data Table -->
-            <div class="overflow-x-auto mb-8">
+            <div class="overflow-x-auto scrollbar-hide">
                 <div class="min-w-full w-64">
                 <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-indigo-500 text-white">
                         <tr>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
-                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member Pelanggan</th>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
+                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member</th>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
-                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pemesanan</th>
+                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Kendaraan</th>
+                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Plat Nomor</th>
+                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pesan</th>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Total Biaya</th>
                             <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Status Pengerjaan</th>
@@ -79,12 +81,14 @@
                         @forelse ($orders as $index => $order)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-4 text-center">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-                            <td class="py-3 px-4 text-center">{{ $order->user->id_member ?? 'Tidak Ada' }}</td>
                             <td class="py-3 px-4 text-center">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                            <td class="py-3 px-4 text-center"> {{ $order->user->id_member  ?? 'Tidak Ada' }}</td>
                             <td class="py-3 px-4 text-center">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                            <td class="py-3 px-4 text-center"> {{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                            <td class="py-3 px-4 text-center"> {{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
                             <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
                             <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
-                            <td class="py-3 px-4 text-center">Rp {{ number_format($order->biaya, 3, ',', '.') }}</td>
+                            <td class="py-3 px-4 text-center">Rp {{ number_format($order->biaya, 0, ',', '.') }}</td>
                             <td class="py-3 px-4 text-center">
                                 <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-white bg-{{ $order->status == 'Selesai' ? 'green' : 'yellow' }}-500 rounded-full">
                                     {{ $order->status == 'Selesai' ? 'Selesai' : 'Belum selesai' }}
@@ -93,7 +97,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4 px-4 text-gray-500">Tidak ada data laporan.</td>
+                            <td colspan="10" class="text-center py-4 px-4 text-gray-500">Tidak ada data laporan.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -101,7 +105,7 @@
             </div>
         </div>
 
-        <div class="flex justify-end mb-4">
+        <div class="flex justify-end mb-4 mt-4">
             <a href="{{ route('laporan.cetak-pdf', ['start_date' => request('start_date')]) }}" 
                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center">
                 <i class="fa-solid fa-file-pdf mr-2"></i>
@@ -183,5 +187,17 @@
     // Set tanggal sekarang sebagai default value
     dateInput.value = formatDate(today);
 </script>
+
+<style>
+    /* Utility Class to Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
+
+.scrollbar-hide {
+-ms-overflow-style: none; /* IE and Edge */
+scrollbar-width: none; /* Firefox */
+}
+</style>
 
 @endsection

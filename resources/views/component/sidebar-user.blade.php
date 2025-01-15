@@ -36,7 +36,6 @@
     </div>
 </nav>
 
-<!-- Sidebar -->
   <!-- Sidebar -->
   <div class="flex min-h-screen">
     <aside id="sidebar" class="w-64 bg-indigo-400 p-6 fixed left-0 top-0 h-full z-20 shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 overflow-y-auto" aria-hidden="true">

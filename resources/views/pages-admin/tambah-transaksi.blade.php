@@ -9,8 +9,6 @@
 
     <!-- Content Area -->
 <div class="flex-1 p-5">
-    <!-- White Container -->
-    <div class="bg-white shadow-md rounded-lg p-5">
 
         <div class="mb-4">
         </div>
@@ -22,80 +20,75 @@
         <div class="text-center mb-8">
             <h1 class="text-2xl font-semibold text-gray-800">Form Tambah Transaksi</h1>
         </div>
+<!-- Form Tambah Transaksi -->
+<form action="data-transaksi" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white shadow-md rounded-lg">
 
-        <!-- Form Tambah Transaksi -->
-        <form action="data-transaksi" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-          <!-- Nama Pelanggan -->
-        <div>
-            <label for="nama-pelanggan" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
-            <select name="user_id" id="nama-pelanggan" 
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" required>
-                <option value="">-- Pilih Nama Pelanggan --</option>
-                @foreach($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-  
-            <!-- Tanggal -->
-            <div>
-                <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="text" name="tanggal" id="tanggal" 
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" required readonly>
-            </div>
-           <!-- Jenis Layanan -->
-           <div>
-            <label for="nama-layanan" class="block text-sm font-medium text-gray-700">Nama Layanan</label>
-            <select name="nama-layanan" id="nama-layanan" 
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" required>
-                <option value="">-- Pilih Layanan --</option>
-                @foreach($layanan as $item)
-                    <option value="{{ $item->id }}" {{ old('nama-layanan') == $item->id ? 'selected' : '' }}>
-                        {{ $item->nama_layanan }} - Rp{{ number_format($item->harga, 0, ',', '.') }}
-                    </option>
-                @endforeach
-            </select>
-        </div>    
-            <!-- Metode Pembayaran -->
-            {{-- <div>
-                <label for="metode-pembayaran" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
-                <select name="metode-pembayaran" id="metode-pembayaran" 
-                        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" required>
-                    <option value="Cash">Cash</option>
-                    <option value="Digital">Digital</option>
-                </select>
-            </div> --}}
-
-            <!-- Total Biaya -->
-            {{-- <div>
-                <label for="total-biaya" class="block text-sm font-medium text-gray-700">Total Biaya</label>
-                <input type="number" name="total-biaya" id="total-biaya" 
-                    class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300">
-            </div> --}}
-
-           <!-- Status -->
-<div>
-    <label for="status" class="block text-sm font-medium text-gray-700">Status Pengerjaan</label>
-    <select name="status" id="status" 
-            class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300" required>
-        <option value="Belum Selesai">Belum Selesai</option>
-        <option value="Proses">Proses</option>
-        <option value="Selesai">Selesai</option>
-    </select>
+    <!-- Nama Pelanggan -->
+    <div>
+        <label for="nama-pelanggan" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
+        <select name="user_id" id="nama-pelanggan" 
+        class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+    <option value="">-- Pilih Nama Pelanggan --</option>
+    @foreach($users as $user)
+        <option value="{{ $user->id_user }}">{{ $user->name }} </option>
+    @endforeach
+</select>
 </div>
-
-            <!-- Tombol Simpan dan Batal -->
-            <div class="col-span-1 md:col-span-2 flex justify-center space-x-4 items-center ">
-                <button type="button" onclick="openModal()"
-                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition">Tambah</button>
-                <a href="data-transaksi" 
-                   class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition">Batal</a>
-            </div>
-        </form>
+    
+    <!-- Tanggal -->
+    <div>
+        <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
+        <input type="text" name="tanggal" id="tanggal" 
+               class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" required readonly>
     </div>
-</div>
+
+    <!-- Waktu -->
+    <div>
+        <label for="time" class="block text-sm font-medium text-gray-700">Waktu</label>
+        <input type="time" id="time" 
+               class="mt-2 block w-full p-3 border border-gray-300 rounded-md bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400" 
+               value="{{ date('H:i') }}" readonly required>
+    </div>
+
+    <!-- Jenis Layanan -->
+    <div>
+        <label for="nama-layanan" class="block text-sm font-medium text-gray-700">Nama Layanan</label>
+        <select name="nama-layanan" id="nama-layanan" 
+                class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+            <option value="">-- Pilih Layanan --</option>
+            @foreach($layanan as $item)
+                <option value="{{ $item->id }}" {{ old('nama-layanan') == $item->id ? 'selected' : '' }}>
+                    {{ $item->nama_layanan }} - Rp{{ number_format($item->harga, 0, ',', '.') }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Jenis Kendaraan -->
+    <div>
+        <label for="jenis_kendaraan" class="block text-sm font-medium text-gray-700">Jenis Kendaraan</label>
+        <input type="text" id="jenis_kendaraan" name="jenis_kendaraan" 
+               placeholder="Masukkan jenis kendaraan" 
+               class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+
+    <!-- Nomor Plat -->
+    <div>
+        <label for="plat_nomor" class="block text-sm font-medium text-gray-700">Nomor Plat</label>
+        <input type="text" id="plat_nomor" name="plat_nomor" 
+               placeholder="Masukkan plat nomor" 
+               class="mt-2 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+
+    <!-- Tombol Simpan dan Batal -->
+    <div class="col-span-1 md:col-span-2 flex justify-center space-x-4">
+        <button type="button" onclick="openModal()"
+                class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition">Tambah</button>
+        <a href="data-transaksi" 
+           class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition">Batal</a>
+    </div>
+</form>
+
 
 <!-- Modal Pilih Metode Pembayaran -->
 <div id="paymentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -170,10 +163,14 @@
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
-                    layanan_id: layananId,
-                    tanggal: "{{ date('Y-m-d') }}",
-                    waktu: "{{ date('H:i') }}",
-                    metode_pembayaran: method
+                    layanan_id: layananId, 
+                    id_member: "{{ $user->id_member }}", // ID member user
+                    user_id:  "{{ $user->id}}",
+                    tanggal: "{{ date('Y-m-d') }}",  // Tanggal saat ini
+                    waktu: "{{ date('H:i') }}",  // Waktu saat ini
+                    metode_pembayaran: method,  // Metode pembayaran (input dari user)
+                    plat_nomor: document.getElementById('plat_nomor').value,  // Input plat nomor
+                    jenis_kendaraan: document.getElementById('jenis_kendaraan').value  // Input jenis kendaraan
                 })
             })
             .then(response => response.json())

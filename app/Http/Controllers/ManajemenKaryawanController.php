@@ -10,7 +10,7 @@ class ManajemenKaryawanController extends Controller
     // Menampilkan daftar pengguna dengan role 'user'
     public function index()
     {
-        $users = User::where('role', 'karyawan')->paginate(2); // Mengambil data pengguna dengan role 'karyawan' dan membaginya dalam 10 item per halaman
+        $users = User::where('role', 'karyawan')->paginate(10); // Mengambil data pengguna dengan role 'karyawan' dan membaginya dalam 10 item per halaman
         return view('pages-admin.manajemen-karyawan', compact('users')); // Menampilkan tampilan dengan data pengguna
     }
     

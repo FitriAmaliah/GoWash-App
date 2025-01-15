@@ -218,6 +218,9 @@ Route::get('/laporan/cetak-pdf', [AdminController::class, 'cetakPdf'])->name('la
 // route filter tanggal laporan
 Route::get('/laporan/filter', [AdminController::class, 'filter'])->name('laporan.filter');
 
+    // Rute untuk menghapus ulasan
+    Route::delete('ulasan/{id}', [UlasanController::class, 'destroy'])->name('ulasan.destroy');
+
 Route::middleware(['auth:user'])->group(function () {
     //tampilan route role user
     Route::get('/pages-user/dashboard-user', [UserController::class, 'dashboard'])->name('dashboard.user');
@@ -233,6 +236,8 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/checkout', [UserController::class, 'checkout'])->name('checkout');
     Route::post('/payment/success', [UserController::class, 'paymentSuccess'])->name('payment.success');
     Route::get('/pages-user/pelanggan', [UserController::class, 'pelanggan'])->name('pelanggan');
+    Route::post('/pemesanan', [UserController::class, 'store'])->name('pemesanan.store');
+
 
     // route ulasan user
     // Rute untuk menampilkan daftar ulasan
@@ -246,8 +251,6 @@ Route::middleware(['auth:user'])->group(function () {
     // Rute untuk memperbarui ulasan
     Route::put('ulasan/{id}', [UlasanController::class, 'update'])->name('ulasan.update');
 
-    // Rute untuk menghapus ulasan
-    Route::delete('ulasan/{id}', [UlasanController::class, 'destroy'])->name('ulasan.destroy');
 
     // route pemesanan
     Route::get('/pemesanan/{id}', [PemesananController::class, 'create'])->name('pages-user.form-pemesanan');

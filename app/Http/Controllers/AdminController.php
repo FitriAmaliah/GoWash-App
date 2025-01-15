@@ -47,7 +47,7 @@ class AdminController extends Controller
     public function datalayanan()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $layanans = Layanan::paginate(5); // Menampilkan 4 komentar per halaman
+        $layanans = Layanan::paginate(10); // Menampilkan 4 komentar per halaman
         return view('pages-admin.data-layanan', compact('layanans'));
     }
     
@@ -123,8 +123,7 @@ class AdminController extends Controller
         // Menghasilkan file PDF dan mendownloadnya
         return $pdf->download('laporan-transaksi.pdf');
     }
-    
-      
+     
     public function filter(Request $request)
     {
         // Ambil parameter start_date dari request
@@ -149,115 +148,131 @@ class AdminController extends Controller
         return view('pages-admin.data-transaksi', compact('orders'));
     }
 
-    public function tambahtransaksi()
-    {
-        // Mengambil semua data pengguna
-        $users = User::where('role', 'user')->get();
-        $layanan = Layanan::all();
+public function tambahtransaksi()
+{
+    // Mengambil semua data pengguna dengan role 'user'
+    $users = User::where('role', 'user')->get()->map(function($user) {
+        // Mengganti nama atribut 'id' menjadi 'id_user'
+        $user->id_user = $user->id;
+        return $user;
+    });
 
-        return view('pages-admin.tambah-transaksi', compact('users', 'layanan')); // Profile view
-    }
+    $layanan = Layanan::all();
+
+    return view('pages-admin.tambah-transaksi', compact('users', 'layanan')); // Profile view
+}
 
         public function storetransaksibyadmin(Request $request)
-    {
-        try {
-            $user = Auth::user();
-            if (!$user) {
-                throw new \Exception('User not authenticated');
-            }
+        {  
+                    // dd($request->all());
+                try {
+                    $user = User::findOrFail($request->user_id);
+                    if (!$user) {
+                        throw new \Exception('User not authenticated');
+                    }
 
-            // Validasi data
-            $validated = $request->validate([
-                'layanan_id' => 'required|exists:layanan,id',
-                'tanggal' => 'required|date',
-                'waktu' => 'required|date_format:H:i',
-                'metode_pembayaran' => 'required|in:cash,digital',
-            ]);
-
-            $layananId = $validated['layanan_id'];
-            $tanggal = $validated['tanggal'];
-            $waktu = $validated['waktu'];
-            $metodePembayaran = $validated['metode_pembayaran'];
-
-            // Cari layanan
-            $layanan = Layanan::findOrFail($layananId);
-            if (!$layanan) {
-                throw new \Exception('Layanan not found');
-            }
-
-            $biaya = $layanan->harga; // Sesuaikan dengan nama kolom harga pada model Layanan
-
-            // Simpan pemesanan
-            $pemesanan = Pemesanan::create([
-                'layanan_id' => $layananId,
-                'user_id' => $user->id,
-                'tanggal' => $tanggal,
-                'waktu' => $waktu,
-                'status' => 'belum selesai',
-                'metode_pembayaran' => $metodePembayaran,
-                'status_pembayaran' => $metodePembayaran === 'cash' ? 'success' : 'pending',
-                'biaya' => $biaya,
-            ]);
-
-            if ($metodePembayaran === 'cash') {
-                // Jika pembayaran cash, langsung sukses
-                $pemesanan->status = 'belum selesai';
-                $pemesanan->save();
-
-                return response()->json([
-                    'message' => 'Pemesanan berhasil dengan metode cash!',
-                    'pemesanan' => $pemesanan,
+                // Validasi data
+                $validated = $request->validate([
+                    'layanan_id' => 'required|exists:layanan,id',
+                    'id_member' => 'required|exists:users,id_member',
+                    'tanggal' => 'required|date',
+                    'waktu' => 'required|date_format:H:i',
+                    'metode_pembayaran' => 'required|in:cash,digital',
+                    'plat_nomor' => 'required|string|max:255', // Tambahkan validasi untuk plat_nomor
+                    'jenis_kendaraan' => 'required|string|max:255', // Tambahkan validasi untuk plat_nomor
                 ]);
-            } elseif ($metodePembayaran === 'digital') {
-                // Konfigurasi Midtrans
-                Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-                Config::$isProduction = false; // Ubah ke true jika dalam mode produksi
-                Config::$isSanitized = true;
-                Config::$is3ds = true;
-
-                // Siapkan data untuk Snap Midtrans
-                $payload = [
-                    'transaction_details' => [
-                        'order_id' => $pemesanan->id,
-                        'gross_amount' => $biaya,
-                    ],
-                    'customer_details' => [
-                        'first_name' => $user->name,
-                        'email' => $user->email,
-                        'phone' => $user->telepon ?? '',
-                    ],
-                    'item_details' => [
-                        [
-                            'id' => $layananId,
-                            'price' => $biaya,
-                            'quantity' => 1,
-                            'name' => $layanan->nama_layanan,
+        
+                $layananId = $validated['layanan_id'];
+                $tanggal = $validated['tanggal'];
+                $waktu = $validated['waktu'];
+                $metodePembayaran = $validated['metode_pembayaran'];
+                $platNomor = $request->input('plat_nomor');
+                $jenisKendaraan = $request->input('jenis_kendaraan');   
+                $idMember =$validated['id_member'];
+        
+                // Cari layanan
+                $layanan = Layanan::findOrFail($layananId);
+                if (!$layanan) {
+                    throw new \Exception('Layanan not found');
+                }
+        
+                $biaya = $layanan->harga; // Sesuaikan dengan nama kolom harga pada model Layanan
+                \Log::info($request->all());
+        
+                // Simpan pemesanan
+                $pemesanan = Pemesanan::create([
+                    'layanan_id' => $layananId,
+                    'id_member' => $user->id_member,
+                    'user_id' => $user->id,
+                    'tanggal' => $tanggal,
+                    'waktu' => $waktu,
+                    'status' => 'belum selesai',
+                    'metode_pembayaran' => $metodePembayaran,
+                    'status_pembayaran' => $metodePembayaran === 'cash' ? 'success' : 'pending',
+                    'biaya' => $biaya,
+                    'plat_nomor' => $platNomor, // Tambahkan nilai plat_nomor
+                    'jenis_kendaraan' => $jenisKendaraan, // Tambahkan nilai plat_nomor
+                ]);
+        
+                if ($metodePembayaran === 'cash') {
+                    // Jika pembayaran cash, langsung sukses
+                    $pemesanan->status = 'belum selesai';
+                    $pemesanan->save();
+        
+                    return response()->json([
+                        'message' => 'Pemesanan berhasil dengan metode cash!',
+                        'pemesanan' => $pemesanan,
+                    ]);
+                } elseif ($metodePembayaran === 'digital') {
+                    // Konfigurasi Midtrans
+                    Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+                    Config::$isProduction = false; // Ubah ke true jika dalam mode produksi
+                    Config::$isSanitized = true;
+                    Config::$is3ds = true;
+        
+                    // Siapkan data untuk Snap Midtrans
+                    $payload = [
+                        'transaction_details' => [
+                            'order_id' => $pemesanan->id,
+                            'gross_amount' => $biaya,
                         ],
-                    ],
-                ];
-
-                $snapToken = Snap::getSnapToken($payload);
-
-                return response()->json([
-                    'snapToken' => $snapToken,
-                    'pemesanan' => $pemesanan,
-                ]);
+                        'customer_details' => [
+                            'first_name' => $user->name,
+                            'email' => $user->email,
+                            'phone' => $user->telepon ?? '',
+                        ],
+                        'item_details' => [
+                            [
+                                'id' => $layananId,
+                                'price' => $biaya,
+                                'quantity' => 1,
+                                'name' => $layanan->nama_layanan,
+                            ],
+                        ],
+                    ];
+        
+                    $snapToken = Snap::getSnapToken($payload);
+        
+                    return response()->json([
+                        'snapToken' => $snapToken,
+                        'pemesanan' => $pemesanan,
+                    ]);
+                }
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                // Catat error validasi
+                Log::error('Validation Error: ', $e->errors());
+                return response()->json(['error' => 'Validation Error', 'messages' => $e->errors()], 422);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                // Catat jika model tidak ditemukan
+                Log::error('Model Not Found: ' . $e->getMessage());
+                return response()->json(['error' => 'Data not found'], 404);
+            } catch (\Exception $e) {
+                // Catat error umum lainnya
+                Log::error('Checkout Error: ' . $e->getMessage());
+                return response()->json(['error' => 'Something went wrong'], 500);
             }
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Catat error validasi
-            Log::error('Validation Error: ', $e->errors());
-            return response()->json(['error' => 'Validation Error', 'messages' => $e->errors()], 422);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Catat jika model tidak ditemukan
-            Log::error('Model Not Found: ' . $e->getMessage());
-            return response()->json(['error' => 'Data not found'], 404);
-        } catch (\Exception $e) {
-            // Catat error umum lainnya
-            Log::error('Checkout Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Something went wrong'], 500);
         }
-    }
-
+        
     public function paymentsuccesstransaksibyadmin(Request $request)
     {
         try {
@@ -617,7 +632,7 @@ public function indexmanajemenlaporan(Request $request)
     public function ulasanpengguna()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $ulasan = Ulasan::paginate(2); // Menampilkan 4 komentar per halaman
+        $ulasan = Ulasan::paginate(4); // Menampilkan 4 komentar per halaman
         return view('pages-admin.ulasan-pengguna', compact('ulasan'));
     }
 

@@ -21,6 +21,8 @@ class Pemesanan extends Model
         'metode_pembayaran',
         'status_pembayaran',
         'biaya',
+        'plat_nomor',
+        'jenis_kendaraan',
     ];
 
     /**
@@ -39,4 +41,15 @@ class Pemesanan extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     
+    public function member()
+    {
+        return $this->belongsTo(User::class, 'id_member'); // Jika menggunakan id_member
+    }
+
+    public function pemesanan()
+    {
+        return $this->hasMany(Pemesanan::class, 'id_member');
+    }
+
+
 }

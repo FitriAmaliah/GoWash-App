@@ -99,19 +99,31 @@
         <div class="text-center text-gray-700">GoWash</div>
         <hr>
             <div class="mb-4">
-                <div class="flex justify-between">
-                    <span class="text-gray-700">Nama Pelanggan:</span>
-                    <span class="font-bold">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</span>
+                 <div class="flex justify-between">
+                        <span class="text-gray-600">Nama Pelanggan:</span>
+                        <span class="font-bold">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Jenis Kendaraan:</span>
+                            <span class="font-bold">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</span>
+                        </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Plat Nomor:</span>
+                            <span class="font-bold">{{ $order->plat_nomor ?? 'Tidak Ada'}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Metode Pembayaran:</span>
+                            <span class="font-bold">{{ $order->metode_pembayaran }}</span>
+                        </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="font-bold">{{ $order->status_pembayaran }}</span>
+                        </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Biaya:</span>
+                        <span class="font-bold">Rp {{ number_format($order->biaya, 0, ',', '.') }}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-700">Metode Pembayaran:</span>
-                    <span class="font-bold">{{ $order->metode_pembayaran }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-700">Status:</span>
-                    <span class="font-bold">{{ $order->status_pembayaran }}</span>
-                </div>
-            </div>
 
             <hr>
 
@@ -122,7 +134,7 @@
                 </div>
                 <div class="flex justify-between mt-2">
                     <span class="text-gray-700">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</span>
-                    <span class="font-mono">Rp {{ number_format($order->biaya, 3, ',', '.') }}
+                    <span class="font-mono">Rp {{ number_format($order->biaya, 0, ',', '.') }}
                     </span>
                 </div>
             </div>
@@ -131,7 +143,7 @@
             <div class="border-t pt-2">
                 <div class="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span class="font-mono">Rp {{ number_format($order->biaya, 3, ',', '.') }}
+                    <span class="font-mono">Rp {{ number_format($order->biaya, 0, ',', '.') }}
                     </span>
                 </div>
                 <div class="text-center text-sm text-gray-500 mt-4">Terima Kasih atas Kunjungan Anda!</div>

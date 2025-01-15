@@ -42,16 +42,18 @@
              </div>      
 
         <!-- Data Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto scrollbar-hide">
             <div class="min-w-full w-64">
             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
                 <thead class="bg-indigo-500 text-white">
                     <tr>
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member</th>
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member</th>
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Kendaraan</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Plat Nomor</th>
+                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pesan</th>
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Total Pemesanan</th> <!-- Changed this column name -->
                         <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Status Pembayaran</th>
@@ -62,9 +64,11 @@
                     @forelse ($orders as $index => $order)
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="py-3 px-4 text-center">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->user->id_member  ?? 'Tidak Ada' }}</td>
                         <td class="py-3 px-4 text-center">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                        <td class="py-3 px-4 text-center">{{ $order->user->id_member  ?? 'Tidak Ada' }}</td>
                         <td class="py-3 px-4 text-center">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                        <td class="py-3 px-4 text-center">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                        <td class="py-3 px-4 text-center">{{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
                         <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
                         <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
                         <td class="py-3 px-4 text-center">{{ $order->user ? $order->user->orders->count() : 0 }}</td>
@@ -83,17 +87,17 @@
                         <td class="py-3 px-4 text-center">
                             <div class="flex justify-center">
                                 <button 
-                                    onclick="openModal({{ $order->id }})" 
-                                    class="inline-flex items-center px-4 py-2 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all w-32">
-                                    <i class="fa-solid fa-eye mr-2"></i>
-                                    Lihat Detail
-                                </button>
+                                onclick="openModal({{ $order->id }})" 
+                                class="inline-flex items-center justify-center px-3 py-2 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                title="Lihat Detail">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>  
                             </div>
                         </td>                                    
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="text-center py-3 px-4 text-gray-700">Tidak ada data yang ditemukan</td>
+                        <td colspan="11" class="text-center py-3 px-4 text-gray-700">Tidak ada data yang ditemukan</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -111,13 +115,15 @@
     <div id="detail-modal-{{ $order->id }}" class="detail-modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-3/4 md:w-1/2 lg:w-1/3 max-w-lg mx-4 sm:mx-8 md:mx-16">
             <h3 class="text-lg font-semibold mb-4">Detail Pesanan</h3>
-            <p><strong>Id Pelanggan:</strong> {{ $order->user->id_member ?? 'Tidak Ada' }}</p>
-            <p><strong>Nama Pelanggan:</strong> {{ optional($order->user)->name ?? 'Tidak diketahui' }}</p>
+            <p><strong>Nama Pelanggan:</strong>{{ optional($order->user)->name ?? 'Tidak diketahui' }}</p>
+            <p><strong>ID Member:</strong> {{ $order->user->id_member  ?? 'Tidak Ada' }}</p>
             <p><strong>Jenis Layanan:</strong> {{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</p>
-            <p><strong>Tanggal:</strong> {{ $order->tanggal }}</p>
+            <p><strong>Jenis Kendaraan:</strong>  {{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</p>
+            <p><strong>Plat Nomor:</strong>  {{ $order->plat_nomor ?? 'Tidak Ada'}}</p>
+            <p><strong>Tanggal Pesan:</strong> {{ $order->tanggal }}</p>
             <p><strong>Metode Pembayaran:</strong> {{ $order->metode_pembayaran }}</p>
             <p><strong>Total Pemesanan:</strong> {{ $order->user ? $order->user->orders->count() : 0 }}</p>
-            <p><strong>Status Pemesanan:</strong> {{ $order->status }}</p>
+            <p><strong>Status Pembayaran:</strong> {{ $order->status_pembayaran }}</p>
             <button 
                 onclick="closeModal({{ $order->id }})" 
                 class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition">
@@ -151,5 +157,18 @@
         }
     }
 </script>
+
+
+<style>
+    /* Utility Class to Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+display: none;
+}
+
+.scrollbar-hide {
+-ms-overflow-style: none; /* IE and Edge */
+scrollbar-width: none; /* Firefox */
+}
+</style>
 
 @endsection

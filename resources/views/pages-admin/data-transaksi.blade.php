@@ -49,66 +49,82 @@
     </div>
 </div>
 
-        <!-- Data Table -->
-        <div class="overflow-x-auto">
-            <div class="min-w-full w-64">
-            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
-                <thead class="bg-indigo-500 text-white">
-                    <tr>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Total Biaya</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Status</th>
-                        <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    @forelse ($orders as $index => $order)
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <!-- Adjusting the numbering to remain sequential across pages -->
-                        <td class="py-3 px-4 text-center">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-                        <td class="py-3 px-4 text-center">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
-                        <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
-                        <td class="py-3 px-4 text-center">Rp {{ number_format($order->biaya, 3, ',', '.') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            @if(strtolower(trim($order->status_pembayaran)) == 'success')
-                            <span class="bg-green-200 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                {{ $order->status_pembayaran }}
-                            </span>
-                            @else
-                            <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                {{ $order->status_pembayaran }}
-                            </span>
-                            @endif
-                        </td>
-                        <td class="py-3 px-4 text-center flex justify-center space-x-2">
-                            <!-- Print Button -->
-                            <a href="{{ route('detail.order', $order->id) }}" title="Cetak" class="inline-block">
-                                <button class="bg-green-500 text-white p-2 rounded hover:bg-green-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-white">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
-                                    </svg>
-                                </button>
-                            </a>
-                        </td>                        
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" class="text-center py-4 px-4 text-gray-500">Tidak ada data pemesanan.</td>
-                    </tr>
-                    @endforelse    
-                </tbody>
-            </table>
-        </div>
+<!-- Data Table -->
+<div class="overflow-x-auto scrollbar-hide">
+    <div class="min-w-full w-64">
+        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden leading-normal">
+            <thead class="bg-indigo-500 text-white">
+                <tr>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">No</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Nama Pelanggan</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">ID Member</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Layanan</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Jenis Kendaraan</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Plat Nomor</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Tanggal Pesan</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Metode Pembayaran</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Total Biaya</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Status</th>
+                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                @forelse ($orders as $index => $order)
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-3 px-4 text-center">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
+                    <td class="py-3 px-4 text-center">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->user->id_member  ?? 'Tidak Ada' }}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->tanggal }}</td>
+                    <td class="py-3 px-4 text-center">{{ $order->metode_pembayaran }}</td>
+                    <td class="py-3 px-4 text-center">Rp {{ number_format($order->biaya, 0, ',', '.') }}</td>
+                    <td class="py-3 px-4 text-center">
+                        @if(strtolower(trim($order->status_pembayaran)) == 'success')
+                        <span class="bg-green-200 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                            {{ $order->status_pembayaran }}
+                        </span>
+                        @else
+                        <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                            {{ $order->status_pembayaran }}
+                        </span>
+                        @endif
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <a href="{{ route('detail.order', $order->id) }}" title="Cetak">
+                            <button class="bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                                </svg>
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="11" class="text-center py-4 px-4 text-gray-500">Tidak ada data pemesanan.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-            <!-- Pagination -->
+</div>
+   <!-- Pagination -->
             <div class="mt-4">
                 {{ $orders->appends(['search' => request('search')])->links('pagination::tailwind') }}
             </div> 
+    
+<style>
+                /* Utility Class to Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+</style>
 
 @endsection

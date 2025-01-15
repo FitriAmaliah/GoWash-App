@@ -176,7 +176,7 @@ public function indexstatuspengerjaan(Request $request)
     public function riwayatpengerjaan()
     {
         // Ambil pesanan dengan status "Selesai"
-        $orders = Pemesanan::where('status', 'Selesai')->paginate(5);
+        $orders = Pemesanan::where('status', 'Selesai')->paginate();
         
         return view('pages-karyawan.riwayat-pengerjaan', compact('orders'));
     }
@@ -222,7 +222,7 @@ public function indexstatuspengerjaan(Request $request)
     public function ulasanpengguna()
     {
         // Mengambil ulasan dengan pagination, menampilkan 4 komentar per halaman
-        $ulasan = Ulasan::paginate(2); // Menampilkan 4 komentar per halaman
+        $ulasan = Ulasan::paginate(4); // Menampilkan 4 komentar per halaman
         return view('pages-karyawan.ulasan-pengguna', compact('ulasan'));
     }
 

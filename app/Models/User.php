@@ -63,7 +63,9 @@ class User extends Authenticatable
 
     public function orders()
 {
-    return $this->hasMany(Pemesanan::class);
+    return $this->hasMany(Pemesanan::class, 'user_id', 'id');
 }
+
+
 
 }

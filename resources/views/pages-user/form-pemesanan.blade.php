@@ -17,16 +17,50 @@
                 <h5 class="text-2xl font-semibold text-gray-700">Form Tambah Pemesanan</h5>
             </div>
 
-            <!-- Form Container -->
+                    <!-- Form Container -->
             <div class="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
                 <form id="form-pemesanan" method="POST">
                     @csrf
-                    <!-- Jenis Layanan -->
+                 <!-- Jenis Layanan -->
                     <div class="flex flex-col space-y-4 mb-6">
                         <label for="service" class="block text-sm font-medium text-gray-700">Jenis Layanan</label>
-                        <input type="text" id="service" name="service" value="{{ $layanans->nama_layanan }}" class="block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
+                        <input type="text" id="service" name="service" value="{{ $layanan->nama_layanan }}" class="block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-blue-400" readonly>
                     </div>
 
+                   <!-- ID Member -->
+            <div class="flex flex-col space-y-4 mb-6">
+                <label for="id_member" class="block text-sm font-medium text-gray-700">ID Member</label>
+                <input 
+                    type="text" 
+                    id="user_id" 
+                    name="user_id" 
+                    value="{{ $user->id_member  ?? 'Tidak Ada'}}"  
+                    class="block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-gray-100 focus:outline-none" 
+                    readonly>
+            </div>
+
+                <!-- Jenis Kendaraan -->
+                <div class="flex flex-col space-y-4 mb-6">
+                    <label for="jenis_kendaraan" class="block text-sm font-medium text-gray-700">Jenis Kendaraan</label>
+                    <input 
+                        type="text" 
+                        id="jenis_kendaraan" 
+                        name="jenis_kendaraan" 
+                        placeholder="Masukkan jenis kendaraan" 
+                        class="block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <!-- Nomor Plat -->
+                <div class="flex flex-col space-y-4 mb-6">
+                    <label for="plat_nomor" class="block text-sm font-medium text-gray-700">Nomor Plat</label>
+                    <input 
+                        type="text" 
+                        id="plat_nomor" 
+                        name="plat_nomor" 
+                        placeholder="Masukkan plat nomor" 
+                        class="block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>               
+                    
                     <!-- Tanggal -->
                     <div class="flex flex-col space-y-4 mb-6">
                         <label for="date" class="block text-sm font-medium text-gray-700">Tanggal</label>
@@ -79,6 +113,8 @@
         <button onclick="closeModal()" class="mt-4 text-sm text-gray-500 hover:underline">Tutup</button>
     </div>
 </div>
+
+
 
 <script>
 
@@ -133,10 +169,13 @@
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
-                    layanan_id: "{{ $layanans->id }}",
-                    tanggal: "{{ date('Y-m-d') }}",
-                    waktu: "{{ date('H:i') }}",
-                    metode_pembayaran: method
+                    layanan_id: "{{ $layanan->id }}",  // Ambil ID dari layanan pertama
+                    id_member: "{{ $user->id_member }}",  // ID member user
+                    tanggal: "{{ date('Y-m-d') }}",  // Tanggal saat ini
+                    waktu: "{{ date('H:i') }}",  // Waktu saat ini
+                    metode_pembayaran: method,  // Metode pembayaran (input dari user)
+                    plat_nomor: document.getElementById('plat_nomor').value,  // Input plat nomor
+                    jenis_kendaraan: document.getElementById('jenis_kendaraan').value  // Input jenis kendaraan
                 })
             })
             .then(response => response.json())

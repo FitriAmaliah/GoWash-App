@@ -44,16 +44,14 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* Mengatur kolom agar tetap proporsional */
+            table-layout: fixed;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
         }
 
         thead {
@@ -65,7 +63,7 @@
             padding: 10px;
             text-align: center;
             font-size: 12px;
-            word-wrap: break-word; /* Membungkus teks panjang */
+            word-wrap: break-word;
         }
 
         th {
@@ -103,12 +101,24 @@
         /* Menghindari tabel terpotong saat dicetak */
         @media print {
             table, tr, td, th {
-                page-break-inside: avoid; /* Hindari pemisahan tabel */
+                page-break-inside: avoid;
             }
             body {
                 background-color: white;
             }
         }
+
+        /* Total Keseluruhan Styling */
+        .total-row td {
+            font-weight: bold;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        .total-row td:first-child {
+            text-align: right;
+        }
+
     </style>
 </head>
 <body>
@@ -123,26 +133,35 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>ID Member Pelanggan</th>
                     <th>Nama Pelanggan</th>
+                    <th>ID Member</th>
                     <th>Jenis Layanan</th>
-                    <th>Tanggal Pemesanan</th>
+                    <th>Jenis Kendaraan</th>
+                    <th>Plat Nomor</th>
+                    <th>Tanggal Pesan</th>
                     <th>Metode Pembayaran</th>
                     <th>Total Biaya</th>
-                    <th>Status</th>
+                    <th>Status Pengerjaan</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Contoh Data -->
+                @php
+                    $totalBiayaPerHalaman = 0;
+                @endphp
                 @foreach ($orders as $index => $order)
+                @php
+                    $totalBiayaPerHalaman += $order->biaya;
+                @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $order->user->id_member ?? 'Tidak Ada' }}</td>
                     <td>{{ optional($order->user)->name ?? 'Tidak diketahui' }}</td>
+                    <td>{{ $order->user->id_member ?? 'Tidak Ada' }}</td>
                     <td>{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</td>
+                    <td>{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</td>
+                    <td>{{ $order->plat_nomor ?? 'Tidak Ada'}}</td>
                     <td>{{ $order->tanggal }}</td>
                     <td>{{ $order->metode_pembayaran }}</td>
-                    <td>Rp {{ number_format($order->biaya, 3, ',', '.') }}</td>
+                    <td>Rp {{ number_format($order->biaya, 0, ',', '.') }}</td>
                     <td>
                         <span class="status-label {{ $order->status == 'Selesai' ? 'bg-green-500' : 'bg-yellow-500' }}">
                             {{ $order->status }}
@@ -151,6 +170,13 @@
                 </tr>
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="6">Total :</td>
+                    <td>Rp {{ number_format($totalBiayaPerHalaman, 0, ',', '.') }}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

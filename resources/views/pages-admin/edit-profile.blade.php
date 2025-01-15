@@ -49,19 +49,19 @@
             </div>
 
             <!-- Status -->
-            <div class="mb-4">
+             <!--<div class="mb-4">
                 <label for="status" class="block text-gray-600 font-medium">Status</label>
                 <select id="status" name="is_active" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="1" {{ Auth::user()->is_active ? 'selected' : '' }}>Aktif</option>
                     <option value="0" {{ !Auth::user()->is_active ? 'selected' : '' }}>Tidak Aktif</option>
                 </select>
-            </div>
+            </div>-->
 
             <!-- Tanggal Bergabung (Readonly) -->
-            <div class="mb-4">
+             <!--<div class="mb-4">
                 <label class="block text-gray-600 font-medium">Tanggal Bergabung</label>
                 <p class="w-full p-3 border border-gray-300 rounded bg-gray-100">{{ Auth::user()->created_at->format('d M Y') }}</p>
-            </div>
+            </div>-->
 
             <!-- Tombol Simpan -->
             <div class="flex justify-center">

@@ -31,16 +31,28 @@
                         <span class="font-semibold">{{ optional($order->user)->name ?? 'Tidak diketahui' }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Metode Pembayaran:</span>
-                        <span class="font-semibold">{{ $order->metode_pembayaran }}</span>
+                        <span class="text-gray-600">ID Member:</span>
+                        <span class="font-semibold">{{ $order->user->id_member  ?? 'Tidak Ada' }}</span>
                     </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Jenis Kendaraan:</span>
+                            <span class="font-semibold">{{ $order->jenis_kendaraan ?? 'Tidak Ada'}}</span>
+                        </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Plat Nomor:</span>
+                            <span class="font-semibold">{{ $order->plat_nomor ?? 'Tidak Ada'}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Metode Pembayaran:</span>
+                            <span class="font-semibold">{{ $order->metode_pembayaran }}</span>
+                        </div>
+                    <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="font-semibold">{{ $order->status_pembayaran }}</span>
+                        </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Total Biaya:</span>
-                        <span class="font-semibold">Rp {{ number_format($order->biaya, 3, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Status:</span>
-                        <span class="font-semibold">{{ $order->status_pembayaran }}</span>
+                        <span class="font-semibold">Rp {{ number_format($order->biaya, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
@@ -53,7 +65,7 @@
                     <!-- Tampilkan hanya satu layanan untuk contoh -->
                     <div class="flex justify-between">
                         <span>{{ $order->layanan->nama_layanan ?? 'Tidak Ada' }}</span>
-                        <span>Rp {{ number_format($order->biaya, 3, ',', '.') }}</span>
+                        <span>Rp {{ number_format($order->biaya, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
@@ -61,7 +73,7 @@
                 <div class="border-t pt-2">
                     <div class="flex justify-between font-bold text-lg">
                         <span>Total</span>
-                        <span>Rp {{ number_format($order->biaya, 3, ',', '.') }}</span>
+                        <span>Rp {{ number_format($order->biaya, 0, ',', '.') }}</span>
                     </div>
                     <div class="text-center text-sm text-gray-600 mt-4">Terima Kasih atas Kunjungan Anda!</div>
                 </div>
