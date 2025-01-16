@@ -84,13 +84,21 @@
 <script>
     // Data Pendapatan Berdasarkan Tahun
     const statisticsData = {
-        2025: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4000], // Gantilah dengan data pendapatan yang sesuai
-        2024: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3600], // Gantilah dengan data pendapatan yang sesuai
-        2023: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3000], // Gantilah dengan data pendapatan yang sesuai
+        2025: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200000], // Pendapatan hanya untuk Desember 2025
+        2024: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 195000], // Pendapatan hanya untuk Desember 2024
+        2023: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 180000], // Pendapatan hanya untuk Desember 2023
     };
 
     // Fungsi untuk Memperbarui Data
     function updateChart(year) {
+        // Jika data untuk tahun tidak ada, kosongkan chart
+        if (!statisticsData[year]) {
+            statisticsChart.data.datasets[0].data = []; // Kosongkan data
+            statisticsChart.update();
+            return;
+        }
+
+        // Update data untuk tahun yang dipilih
         statisticsChart.data.datasets[0].data = statisticsData[year];
         statisticsChart.update();
     }
@@ -109,9 +117,9 @@
         ],
     };
 
-    // Konfigurasi Chart untuk Diagram Batang
+    // Konfigurasi Chart
     const config = {
-        type: 'bar', // Mengubah tipe menjadi 'bar' untuk diagram batang
+        type: 'bar',
         data: data,
         options: {
             responsive: true,
@@ -145,6 +153,7 @@
         updateChart(selectedYear);
     });
 </script>
+
 
 
 
